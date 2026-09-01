@@ -1,33 +1,58 @@
 @import "tailwindcss";
 
 :root {
-  --color-ink: #0a1120;
-  --color-navy: #0f1b33;
-  --color-navy-soft: #16213e;
+  --color-ink: #141619;
+  --color-ink-muted: #5e636e;
+  --color-navy: #121418;
+  --color-navy-deep: #0a0b0d;
+  --color-navy-soft: #1a1e24;
+  --color-navy-card: rgba(22, 25, 30, 0.88);
   --color-paper: #ffffff;
-  --color-mist: #f6f7fa;
-  --color-line: #e5e8f0;
-  --color-line-dark: rgba(255, 255, 255, 0.1);
-  --color-muted: #5b6472;
-  --color-muted-dark: rgba(230, 233, 240, 0.62);
-  --color-accent: #c8912f;
-  --color-accent-dark: #a5741f;
-  --color-accent-soft: #fbf1de;
+  --color-canvas: #f7f5f0;
+  --color-canvas-subtle: #eeece4;
+  --color-mist: #f0ede5;
+  --color-line: #dfdacd;
+  --color-line-subtle: #eae6db;
+  --color-line-dark: rgba(255, 255, 255, 0.08);
+  --color-line-gold: rgba(184, 138, 56, 0.25);
+  --color-muted: #5e636e;
+  --color-muted-dark: rgba(215, 212, 205, 0.65);
+  --color-accent: #b88a38;
+  --color-accent-dark: #8e6822;
+  --color-accent-soft: #faf5ea;
+  --color-brass: #b88a38;
+  --color-brass-light: #cfab57;
+  --color-brass-dark: #8e6822;
+  --color-brass-soft: #faf5ea;
 }
 
 @theme inline {
   --color-ink: var(--color-ink);
+  --color-ink-muted: var(--color-ink-muted);
   --color-navy: var(--color-navy);
+  --color-navy-deep: var(--color-navy-deep);
   --color-navy-soft: var(--color-navy-soft);
+  --color-navy-card: var(--color-navy-card);
   --color-paper: var(--color-paper);
+  --color-canvas: var(--color-canvas);
+  --color-canvas-subtle: var(--color-canvas-subtle);
   --color-mist: var(--color-mist);
   --color-line: var(--color-line);
+  --color-line-subtle: var(--color-line-subtle);
+  --color-line-dark: var(--color-line-dark);
+  --color-line-gold: var(--color-line-gold);
   --color-muted: var(--color-muted);
+  --color-muted-dark: var(--color-muted-dark);
   --color-accent: var(--color-accent);
   --color-accent-dark: var(--color-accent-dark);
   --color-accent-soft: var(--color-accent-soft);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-brass: var(--color-brass);
+  --color-brass-light: var(--color-brass-light);
+  --color-brass-dark: var(--color-brass-dark);
+  --color-brass-soft: var(--color-brass-soft);
+  --font-display: var(--font-chivo);
+  --font-sans: var(--font-ibm-plex-sans);
+  --font-mono: var(--font-ibm-plex-mono);
 }
 
 html {
@@ -50,8 +75,9 @@ html {
 body {
   background: var(--color-paper);
   color: var(--color-ink);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
@@ -74,4 +100,36 @@ body {
   .container-x {
     width: min(100% - 2rem, 78rem);
   }
+}
+
+.font-display,
+.font-editorial {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.font-mono,
+code,
+kbd,
+samp,
+pre,
+table {
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.institutional-panel {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 48px -12px rgba(5, 8, 17, 0.55);
+}
+
+.paper-card {
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  box-shadow: 0 1px 3px rgba(13, 19, 31, 0.03), 0 6px 18px -4px rgba(13, 19, 31, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.paper-card:hover {
+  border-color: #cfcac0;
+  box-shadow: 0 3px 6px rgba(13, 19, 31, 0.04), 0 12px 28px -6px rgba(13, 19, 31, 0.08);
 }
