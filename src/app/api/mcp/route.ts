@@ -29,6 +29,7 @@ function unauthorized(message: string, status: 401 | 403) {
       status,
       headers: {
         ...(wwwAuth ? { "WWW-Authenticate": wwwAuth } : {}),
+        "Cache-Control": "no-store",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization, mcp-session-id, x-client-id, x-api-key, accept",
@@ -48,17 +49,49 @@ export async function OPTIONS() {
   });
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const origin = request.nextUrl.origin;
+  const accept = request.headers.get("accept") || "";
+
+  // Support for MCP SSE (Server-Sent Events) clients
+  if (accept.includes("text/event-stream")) {
+    const auth = authenticateMcpRequest(request.headers);
+    if (!auth.authenticated) {
+      return unauthorized(auth.error || "Unauthorized", auth.status || 401);
+    }
+
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode(`event: endpoint\ndata: ${origin}/api/mcp\n\n`));
+      },
+    });
+
+    return new NextResponse(stream, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        "Connection": "keep-alive",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  }
+
+  // Standard JSON response for HTTP discovery
   return NextResponse.json(
     {
       name: "attire-services-cms",
       version: "1.0.0",
-      description: "Attire Services MCP HTTP Endpoint",
+      description: "Attire Services MCP HTTP & SSE Endpoint",
+      protocol: "streamable-http",
+      endpoint: `${origin}/api/mcp`,
       auth: "Bearer Token (ATTIRE_MCP_KEY)",
-      endpoint: "/api/mcp",
     },
     {
+      status: 200,
       headers: {
+        "Cache-Control": "no-store",
         "Access-Control-Allow-Origin": "*",
       },
     }
@@ -75,7 +108,7 @@ export async function POST(request: NextRequest) {
   if (body === null) {
     return NextResponse.json(rpcError(null, JSON_RPC_ERRORS.PARSE_ERROR, "Invalid JSON body."), {
       status: 400,
-      headers: { "Access-Control-Allow-Origin": "*" },
+      headers: { "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" },
     });
   }
 
@@ -83,7 +116,7 @@ export async function POST(request: NextRequest) {
   if (messages.length === 0 || messages.length > MAX_BATCH) {
     return NextResponse.json(
       rpcError(null, JSON_RPC_ERRORS.INVALID_REQUEST, `Send between 1 and ${MAX_BATCH} messages.`),
-      { status: 400, headers: { "Access-Control-Allow-Origin": "*" } }
+      { status: 400, headers: { "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } }
     );
   }
 
@@ -121,6 +154,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(payload, {
     headers: {
       "Content-Type": "application/json",
+      "Cache-Control": "no-store",
       "Access-Control-Allow-Origin": "*",
     },
   });
