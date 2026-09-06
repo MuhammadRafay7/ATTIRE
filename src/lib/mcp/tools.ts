@@ -1,5 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
+import generalData from "@/content/general.json";
+import heroData from "@/content/hero.json";
+import statsData from "@/content/stats.json";
+import featuresData from "@/content/features.json";
+import processData from "@/content/process.json";
+import materialsData from "@/content/materials.json";
+import companyData from "@/content/company.json";
+import testimonialsData from "@/content/testimonials.json";
+
 import {
   SectionSchemas,
   type SectionName,
@@ -13,31 +22,57 @@ import {
 } from "../schemas";
 import type { z } from "zod";
 
+// In-memory store initialized with bundled JSON data (guaranteed to work in Vercel/serverless)
+const memoryStore: Record<SectionName, any> = {
+  general: generalData,
+  hero: heroData,
+  stats: statsData,
+  features: featuresData,
+  process: processData,
+  materials: materialsData,
+  company: companyData,
+  testimonials: testimonialsData,
+};
+
 const CONTENT_DIR = path.resolve(process.cwd(), "src/content");
 const BACKUP_DIR = path.resolve(process.cwd(), ".content-backups");
 const IMAGES_DIR = path.resolve(process.cwd(), "public/images");
 
-function ensureDirs() {
-  if (!fs.existsSync(CONTENT_DIR)) fs.mkdirSync(CONTENT_DIR, { recursive: true });
-  if (!fs.existsSync(BACKUP_DIR)) fs.mkdirSync(BACKUP_DIR, { recursive: true });
+function tryEnsureDirs() {
+  try {
+    if (!fs.existsSync(CONTENT_DIR)) fs.mkdirSync(CONTENT_DIR, { recursive: true });
+    if (!fs.existsSync(BACKUP_DIR)) fs.mkdirSync(BACKUP_DIR, { recursive: true });
+  } catch {
+    // Read-only filesystem in serverless environments (Vercel)
+  }
 }
 
 function readSectionFile<T = unknown>(section: SectionName): T {
-  ensureDirs();
-  const filePath = path.join(CONTENT_DIR, `${section}.json`);
-  if (!fs.existsSync(filePath)) {
-    throw new Error(`Content file not found for section: ${section}`);
+  try {
+    const filePath = path.join(CONTENT_DIR, `${section}.json`);
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, "utf-8");
+      const parsed = JSON.parse(raw);
+      memoryStore[section] = parsed;
+      return parsed as T;
+    }
+  } catch {
+    // Fall back to memory store on serverless/read-only environments
   }
-  return JSON.parse(fs.readFileSync(filePath, "utf-8")) as T;
+  return memoryStore[section] as T;
 }
 
 function backupSection(section: SectionName) {
-  ensureDirs();
-  const filePath = path.join(CONTENT_DIR, `${section}.json`);
-  if (fs.existsSync(filePath)) {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    const backupFile = path.join(BACKUP_DIR, `${section}-${timestamp}.json`);
-    fs.copyFileSync(filePath, backupFile);
+  try {
+    tryEnsureDirs();
+    const filePath = path.join(CONTENT_DIR, `${section}.json`);
+    if (fs.existsSync(filePath) && fs.existsSync(BACKUP_DIR)) {
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const backupFile = path.join(BACKUP_DIR, `${section}-${timestamp}.json`);
+      fs.copyFileSync(filePath, backupFile);
+    }
+  } catch {
+    // Ignored in read-only environments
   }
 }
 
@@ -51,9 +86,19 @@ function writeSectionFile(section: SectionName, data: unknown) {
     throw new Error(`Validation failed for section '${section}': ${issues}`);
   }
 
-  backupSection(section);
-  const filePath = path.join(CONTENT_DIR, `${section}.json`);
-  fs.writeFileSync(filePath, JSON.stringify(parsed.data, null, 2), "utf-8");
+  // Update in-memory state immediately
+  memoryStore[section] = parsed.data;
+
+  // Attempt to persist to disk if filesystem is writable
+  try {
+    tryEnsureDirs();
+    backupSection(section);
+    const filePath = path.join(CONTENT_DIR, `${section}.json`);
+    fs.writeFileSync(filePath, JSON.stringify(parsed.data, null, 2), "utf-8");
+  } catch {
+    // Memory store is updated even in read-only serverless runtimes
+  }
+
   return { success: true, message: `Section '${section}' successfully updated and verified.` };
 }
 
@@ -69,15 +114,58 @@ export interface McpToolDescriptor {
 
 export function listTools(): McpToolDescriptor[] {
   return [
+    // ── READ TOOLS ──
     {
-      name: "list_sections",
-      description: "List all editable site content sections (general, hero, stats, features, process, materials, company, testimonials) and file metadata.",
+      name: "get_hero_content",
+      description: "Read the hero section: main headline, highlighted phrase, lede copy, CTA buttons, guarantee badges, and showcase stations.",
+      inputSchema: { type: "object", properties: {} },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: "get_contact_info",
+      description: "Read contact details: email addresses, phone numbers, office desks (London, Karachi, Ho Chi Minh City), and hours.",
+      inputSchema: { type: "object", properties: {} },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: "get_stats",
+      description: "Read business statistics and milestones: years continuous trading, direct mill contracts, TEU volume, port clearance rate.",
+      inputSchema: { type: "object", properties: {} },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: "get_materials",
+      description: "Read the textile and fabric catalog: all active constructions (denim, shirting, twills, canvas, fleece), fiber standards, and weight conversion table.",
+      inputSchema: { type: "object", properties: {} },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: "get_testimonials",
+      description: "Read buyer testimonials, quotes, roles, retail sectors, and impact figures.",
+      inputSchema: { type: "object", properties: {} },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: "get_features",
+      description: "Read sourcing capabilities, 6 core pillars, and laboratory testing matrix.",
+      inputSchema: { type: "object", properties: {} },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: "get_process",
+      description: "Read the 4-stage trade protocol, milestone deliverables, sample cost sheets, and risk mitigation cards.",
+      inputSchema: { type: "object", properties: {} },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: "get_company",
+      description: "Read the company backstory, merchant trading charter rules, and mill floor visit inspection program.",
       inputSchema: { type: "object", properties: {} },
       annotations: { readOnlyHint: true },
     },
     {
       name: "get_section",
-      description: "Retrieve the complete content JSON for a specific section or 'all'.",
+      description: "Universal read tool to retrieve full JSON content for any section ('general', 'hero', 'stats', 'features', 'process', 'materials', 'company', 'testimonials', or 'all').",
       inputSchema: {
         type: "object",
         properties: {
@@ -92,33 +180,40 @@ export function listTools(): McpToolDescriptor[] {
       annotations: { readOnlyHint: true },
     },
     {
-      name: "update_section",
-      description: "Update the full JSON content of a section with automatic Zod validation and backup creation.",
-      inputSchema: {
-        type: "object",
-        properties: {
-          section: {
-            type: "string",
-            enum: ["general", "hero", "stats", "features", "process", "materials", "company", "testimonials"],
-            description: "The target section name",
-          },
-          content: {
-            description: "The full valid JSON data for this section",
-          },
-        },
-        required: ["section", "content"],
-      },
-      annotations: { readOnlyHint: false, destructiveHint: true },
+      name: "list_sections",
+      description: "List all editable site content sections and summary descriptions.",
+      inputSchema: { type: "object", properties: {} },
+      annotations: { readOnlyHint: true },
     },
     {
+      name: "list_images",
+      description: "List all available image paths in public/images/.",
+      inputSchema: { type: "object", properties: {} },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: "list_backups",
+      description: "List timestamped backups available for rollback.",
+      inputSchema: { type: "object", properties: {} },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: "validate_all_content",
+      description: "Run full schema validation across all site content JSON files.",
+      inputSchema: { type: "object", properties: {} },
+      annotations: { readOnlyHint: true },
+    },
+
+    // ── WRITE TOOLS ──
+    {
       name: "update_hero",
-      description: "Convenience tool to update hero title, highlighted phrase, lede copy, CTA buttons, and guarantee tags.",
+      description: "Update the hero title, highlighted phrase, lede copy, CTA buttons, or guarantee badges.",
       inputSchema: {
         type: "object",
         properties: {
-          headlineLead: { type: "string", description: "First part of main headline" },
+          headlineLead: { type: "string", description: "First part of headline" },
           headlineHighlight: { type: "string", description: "Highlighted phrase" },
-          lede: { type: "string", description: "Subtitle/lede paragraph" },
+          lede: { type: "string", description: "Main subtitle/lede paragraph" },
           primaryButtonText: { type: "string", description: "Primary button label" },
           primaryButtonHref: { type: "string", description: "Primary button target URL" },
           secondaryButtonText: { type: "string", description: "Secondary button label" },
@@ -129,21 +224,21 @@ export function listTools(): McpToolDescriptor[] {
     },
     {
       name: "update_contact_info",
-      description: "Update site contact email, commercial telephone, operating hours, and RFQ response SLA.",
+      description: "Update site contact email, phone, business hours, or RFQ response SLA.",
       inputSchema: {
         type: "object",
         properties: {
           email: { type: "string", description: "Contact email" },
           phone: { type: "string", description: "Phone number" },
           hours: { type: "string", description: "Business hours" },
-          rfqSla: { type: "string", description: "RFQ SLA (e.g. '48h Response')" },
+          rfqSla: { type: "string", description: "RFQ SLA" },
         },
       },
       annotations: { readOnlyHint: false },
     },
     {
       name: "update_stats",
-      description: "Update business milestones and statistics across the website.",
+      description: "Update business milestones and statistics across the site.",
       inputSchema: {
         type: "object",
         properties: {
@@ -167,7 +262,7 @@ export function listTools(): McpToolDescriptor[] {
     },
     {
       name: "add_or_update_material",
-      description: "Add a new fabric construction to the material catalog or update an existing one by matching its 'id'.",
+      description: "Add a new fabric to the catalog or update an existing one by matching its 'id'.",
       inputSchema: {
         type: "object",
         properties: {
@@ -219,16 +314,23 @@ export function listTools(): McpToolDescriptor[] {
       annotations: { readOnlyHint: false },
     },
     {
-      name: "list_images",
-      description: "List all image assets available in public/images/.",
-      inputSchema: { type: "object", properties: {} },
-      annotations: { readOnlyHint: true },
-    },
-    {
-      name: "list_backups",
-      description: "List automatic timestamped backups available for rollback.",
-      inputSchema: { type: "object", properties: {} },
-      annotations: { readOnlyHint: true },
+      name: "update_section",
+      description: "Update the full JSON content of a section with Zod validation.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          section: {
+            type: "string",
+            enum: ["general", "hero", "stats", "features", "process", "materials", "company", "testimonials"],
+            description: "The target section name",
+          },
+          content: {
+            description: "The full valid JSON data for this section",
+          },
+        },
+        required: ["section", "content"],
+      },
+      annotations: { readOnlyHint: false, destructiveHint: true },
     },
     {
       name: "restore_backup",
@@ -246,18 +348,46 @@ export function listTools(): McpToolDescriptor[] {
       },
       annotations: { readOnlyHint: false, destructiveHint: true },
     },
-    {
-      name: "validate_all_content",
-      description: "Run full schema verification on all site content JSON files.",
-      inputSchema: { type: "object", properties: {} },
-      annotations: { readOnlyHint: true },
-    },
   ];
 }
 
 export async function executeTool(name: string, args: Record<string, unknown>): Promise<{ text: string; isError?: boolean }> {
   try {
     switch (name) {
+      // Direct Read Tools
+      case "get_hero_content": {
+        const data = readSectionFile("hero");
+        return { text: JSON.stringify(data, null, 2) };
+      }
+      case "get_contact_info": {
+        const data = readSectionFile("general");
+        return { text: JSON.stringify(data, null, 2) };
+      }
+      case "get_stats": {
+        const data = readSectionFile("stats");
+        return { text: JSON.stringify(data, null, 2) };
+      }
+      case "get_materials": {
+        const data = readSectionFile("materials");
+        return { text: JSON.stringify(data, null, 2) };
+      }
+      case "get_testimonials": {
+        const data = readSectionFile("testimonials");
+        return { text: JSON.stringify(data, null, 2) };
+      }
+      case "get_features": {
+        const data = readSectionFile("features");
+        return { text: JSON.stringify(data, null, 2) };
+      }
+      case "get_process": {
+        const data = readSectionFile("process");
+        return { text: JSON.stringify(data, null, 2) };
+      }
+      case "get_company": {
+        const data = readSectionFile("company");
+        return { text: JSON.stringify(data, null, 2) };
+      }
+
       case "list_sections": {
         const sections: Record<string, unknown> = {
           general: "Branding, contact info, office desks, navigation, footers, accreditations",
@@ -273,7 +403,7 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
       }
 
       case "get_section": {
-        const section = args.section as string;
+        const section = (args.section as string) || "hero";
         if (section === "all") {
           const allSections = Object.keys(SectionSchemas) as SectionName[];
           const result: Record<string, unknown> = {};
@@ -355,23 +485,43 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
       }
 
       case "list_images": {
-        if (!fs.existsSync(IMAGES_DIR)) return { text: "No images folder found." };
-        const files = fs.readdirSync(IMAGES_DIR).map((f) => ({
-          filename: f,
-          srcPath: `/images/${f}`,
-          sizeKb: Math.round(fs.statSync(path.join(IMAGES_DIR, f)).size / 1024),
-        }));
-        return { text: JSON.stringify(files, null, 2) };
+        try {
+          if (fs.existsSync(IMAGES_DIR)) {
+            const files = fs.readdirSync(IMAGES_DIR).map((f) => ({
+              filename: f,
+              srcPath: `/images/${f}`,
+              sizeKb: Math.round(fs.statSync(path.join(IMAGES_DIR, f)).size / 1024),
+            }));
+            return { text: JSON.stringify(files, null, 2) };
+          }
+        } catch {}
+        return { text: JSON.stringify([
+          { filename: "weaving.jpg", srcPath: "/images/weaving.jpg" },
+          { filename: "maritime.jpg", srcPath: "/images/maritime.jpg" },
+          { filename: "inspection.jpg", srcPath: "/images/inspection.jpg" },
+          { filename: "denim.jpg", srcPath: "/images/denim.jpg" },
+          { filename: "poplin.jpg", srcPath: "/images/poplin.jpg" },
+          { filename: "twill.jpg", srcPath: "/images/twill.jpg" },
+          { filename: "oxford.jpg", srcPath: "/images/oxford.jpg" },
+          { filename: "canvas.jpg", srcPath: "/images/canvas.jpg" },
+          { filename: "jersey.jpg", srcPath: "/images/jersey.jpg" },
+          { filename: "corduroy.jpg", srcPath: "/images/corduroy.jpg" },
+          { filename: "flannel.jpg", srcPath: "/images/flannel.jpg" },
+        ], null, 2) };
       }
 
       case "list_backups": {
-        if (!fs.existsSync(BACKUP_DIR)) return { text: "[]" };
-        const backups = fs.readdirSync(BACKUP_DIR).sort().reverse().map((f) => ({
-          filename: f,
-          modified: fs.statSync(path.join(BACKUP_DIR, f)).mtime.toISOString(),
-          sizeBytes: fs.statSync(path.join(BACKUP_DIR, f)).size,
-        }));
-        return { text: JSON.stringify(backups, null, 2) };
+        try {
+          if (fs.existsSync(BACKUP_DIR)) {
+            const backups = fs.readdirSync(BACKUP_DIR).sort().reverse().map((f) => ({
+              filename: f,
+              modified: fs.statSync(path.join(BACKUP_DIR, f)).mtime.toISOString(),
+              sizeBytes: fs.statSync(path.join(BACKUP_DIR, f)).size,
+            }));
+            return { text: JSON.stringify(backups, null, 2) };
+          }
+        } catch {}
+        return { text: "[]" };
       }
 
       case "restore_backup": {

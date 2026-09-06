@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
+import { authCodesMap } from "@/app/api/mcp/consent/route";
 
 const EXPECTED_KEY = process.env.ATTIRE_MCP_KEY || "rafay";
 
@@ -11,18 +12,6 @@ export const MCP_CORS_HEADERS = {
   "Access-Control-Expose-Headers": "WWW-Authenticate, mcp-session-id",
   "Access-Control-Max-Age": "86400",
 };
-
-// In-memory code store for short-lived authorization codes (10 minutes)
-interface AuthCodeEntry {
-  code: string;
-  clientId: string;
-  redirectUri: string;
-  codeChallenge?: string;
-  codeChallengeMethod?: string;
-  expiresAt: number;
-}
-
-const authCodes = new Map<string, AuthCodeEntry>();
 
 export function authorizationServerMetadata(origin: string) {
   return {
@@ -55,9 +44,9 @@ export async function handleAuthorize(req: NextRequest) {
   const params = req.nextUrl.searchParams;
   const redirectUri = params.get("redirect_uri") || "";
   const state = params.get("state") || "";
-  const codeChallenge = params.get("code_challenge") || undefined;
+  const codeChallenge = params.get("code_challenge") || "";
   const codeChallengeMethod = params.get("code_challenge_method") || "S256";
-  const clientId = params.get("client_id") || "claude";
+  const clientId = params.get("client_id") || "Claude / AI Agent";
 
   if (!redirectUri) {
     return NextResponse.json(
@@ -66,23 +55,15 @@ export async function handleAuthorize(req: NextRequest) {
     );
   }
 
-  // Generate single-use authorization code
-  const code = "attire_code_" + crypto.randomBytes(24).toString("hex");
-  authCodes.set(code, {
-    code,
-    clientId,
-    redirectUri,
-    codeChallenge,
-    codeChallengeMethod,
-    expiresAt: Date.now() + 10 * 60 * 1000,
-  });
+  // Redirect to the password authorization consent screen
+  const authorizeUrl = new URL("/mcp/authorize", req.nextUrl.origin);
+  authorizeUrl.searchParams.set("client_id", clientId);
+  authorizeUrl.searchParams.set("redirect_uri", redirectUri);
+  if (state) authorizeUrl.searchParams.set("state", state);
+  if (codeChallenge) authorizeUrl.searchParams.set("code_challenge", codeChallenge);
+  if (codeChallengeMethod) authorizeUrl.searchParams.set("code_challenge_method", codeChallengeMethod);
 
-  // Redirect back to client callback with code & state
-  const target = new URL(redirectUri);
-  target.searchParams.set("code", code);
-  if (state) target.searchParams.set("state", state);
-
-  return NextResponse.redirect(target.toString(), {
+  return NextResponse.redirect(authorizeUrl.toString(), {
     headers: MCP_CORS_HEADERS,
   });
 }
@@ -90,8 +71,6 @@ export async function handleAuthorize(req: NextRequest) {
 export async function handleToken(req: NextRequest) {
   let grantType = "";
   let code = "";
-  let codeVerifier = "";
-  let clientId = "";
   let clientSecret = "";
 
   const contentType = req.headers.get("content-type") || "";
@@ -100,8 +79,6 @@ export async function handleToken(req: NextRequest) {
     if (formData) {
       grantType = (formData.get("grant_type") || "").toString();
       code = (formData.get("code") || "").toString();
-      codeVerifier = (formData.get("code_verifier") || "").toString();
-      clientId = (formData.get("client_id") || "").toString();
       clientSecret = (formData.get("client_secret") || "").toString();
     }
   } else {
@@ -109,14 +86,18 @@ export async function handleToken(req: NextRequest) {
     if (json) {
       grantType = json.grant_type || "";
       code = json.code || "";
-      codeVerifier = json.code_verifier || "";
-      clientId = json.client_id || "";
       clientSecret = json.client_secret || "";
     }
   }
 
-  // Check client_credentials grant
+  // Check client_credentials grant (must match password rafay)
   if (grantType === "client_credentials") {
+    if (clientSecret && clientSecret !== EXPECTED_KEY) {
+      return NextResponse.json(
+        { error: "invalid_client", error_description: "Invalid client_secret password" },
+        { status: 401, headers: MCP_CORS_HEADERS }
+      );
+    }
     return NextResponse.json(
       {
         access_token: EXPECTED_KEY,
@@ -136,33 +117,15 @@ export async function handleToken(req: NextRequest) {
 
   // Check authorization_code grant
   if (grantType === "authorization_code" || code) {
-    const stored = authCodes.get(code);
+    const stored = authCodesMap?.get(code);
     if (!stored || stored.expiresAt < Date.now()) {
-      // Fallback: grant token if code starts with attire_code_
-      if (code.startsWith("attire_code_")) {
-        return NextResponse.json(
-          {
-            access_token: EXPECTED_KEY,
-            token_type: "Bearer",
-            expires_in: 86400 * 365,
-            scope: "mcp",
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "Cache-Control": "no-store",
-              ...MCP_CORS_HEADERS,
-            },
-          }
-        );
-      }
       return NextResponse.json(
-        { error: "invalid_grant", error_description: "Invalid or expired authorization code" },
+        { error: "invalid_grant", error_description: "Invalid or expired authorization code. Authorization required." },
         { status: 400, headers: MCP_CORS_HEADERS }
       );
     }
 
-    authCodes.delete(code);
+    authCodesMap?.delete(code);
 
     return NextResponse.json(
       {
@@ -181,21 +144,9 @@ export async function handleToken(req: NextRequest) {
     );
   }
 
-  // Default fallback: return token
   return NextResponse.json(
-    {
-      access_token: EXPECTED_KEY,
-      token_type: "Bearer",
-      expires_in: 86400 * 365,
-      scope: "mcp",
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store",
-        ...MCP_CORS_HEADERS,
-      },
-    }
+    { error: "unsupported_grant_type", error_description: "Unsupported grant type" },
+    { status: 400, headers: MCP_CORS_HEADERS }
   );
 }
 
