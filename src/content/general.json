@@ -1,0 +1,91 @@
+{
+  "site": {
+    "name": "Attire Services",
+    "tagline": "Direct Principal Apparel Trading",
+    "description": "An independent apparel and textile trading house operating on its own balance sheet. We purchase goods directly from audited mills across South and Southeast Asia, inspect every lot on-site, and land documented, inspection-passed cargo to buyers worldwide.",
+    "registeredCompany": "Attire Services Ltd.",
+    "registrationNumber": "#06894120",
+    "registrationJurisdiction": "England & Wales"
+  },
+  "navLinks": [
+    { "href": "/capabilities", "label": "Capabilities" },
+    { "href": "/process", "label": "How It Works" },
+    { "href": "/materials", "label": "Material Library" },
+    { "href": "/company", "label": "The Company" }
+  ],
+  "contact": {
+    "email": "trade@attireservices.com",
+    "phone": "+44 20 7183 5501",
+    "hours": "Monday – Friday 08:30 – 18:00 GMT",
+    "rfqSla": "48h Response"
+  },
+  "offices": [
+    {
+      "id": "london",
+      "city": "London Desk (Head Office)",
+      "fullCity": "London, United Kingdom",
+      "role": "Head Commercial Office & Trade Finance",
+      "address": "14 Bevis Marks, London EC3A 7BA",
+      "phone": "+44 20 7183 5501",
+      "focus": "Commercial terms, open costing models, buyer governance, and UK/EU customs entry filings."
+    },
+    {
+      "id": "karachi",
+      "city": "Karachi Sourcing Center",
+      "fullCity": "Karachi, Pakistan",
+      "role": "South Asia Sourcing & Technical Center",
+      "address": "Shahrah-e-Faisal, Block 6, Karachi",
+      "phone": "9 Resident Salaried Inspectors",
+      "focus": "Direct mill relationships, greige cotton procurement, denim & twill production, with 9 salaried on-site QC inspectors."
+    },
+    {
+      "id": "hochiminh",
+      "city": "Ho Chi Minh City Desk",
+      "fullCity": "Ho Chi Minh City, Vietnam",
+      "role": "Southeast Asia Technical Apparel Desk",
+      "address": "Le Thanh Ton, District 1, Ho Chi Minh City",
+      "phone": "6 Resident Salaried Inspectors",
+      "focus": "Technical outerwear, circular knits, activewear, and trans-Pacific container logistics, with 6 salaried on-site QC inspectors."
+    }
+  ],
+  "accreditations": [
+    "GOTS Certified",
+    "OEKO-TEX 100",
+    "BSCI Audited",
+    "Sedex SMETA"
+  ],
+  "footerColumns": [
+    {
+      "heading": "Procurement & Quality",
+      "links": [
+        { "label": "Capabilities & Infrastructure", "href": "/capabilities" },
+        { "label": "4-Stage Trade Protocol", "href": "/process" },
+        { "label": "Material Library & Swatches", "href": "/materials" },
+        { "label": "Commercial RFQ Configurator", "href": "/contact" }
+      ]
+    },
+    {
+      "heading": "The Trading House",
+      "links": [
+        { "label": "Origin & Governance", "href": "/company" },
+        { "label": "Trading Standards Charter", "href": "/company#standards" },
+        { "label": "Audit & Compliance Accreditations", "href": "/capabilities#compliance" },
+        { "label": "Mill Floor Visit Program", "href": "/company#visits" }
+      ]
+    },
+    {
+      "heading": "Direct Desk Inquiries",
+      "links": [
+        { "label": "London: trade@attireservices.com", "href": "mailto:trade@attireservices.com" },
+        { "label": "Telephone: +44 20 7183 5501", "href": "tel:+442071835501" },
+        { "label": "Order Swatch Hangers", "href": "/contact?intent=swatches" },
+        { "label": "Submit Production Tech Pack", "href": "/contact" }
+      ]
+    }
+  ],
+  "legalBadges": [
+    "Incoterms® 2020 ICC Standards",
+    "AQL 2.5 Normal Inspection",
+    "GDPR & Commercial Confidentiality"
+  ]
+}

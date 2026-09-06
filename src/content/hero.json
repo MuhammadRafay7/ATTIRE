@@ -1,0 +1,65 @@
+{
+  "title": {
+    "lead": "Direct Principal Apparel Trading, Handled on Our",
+    "highlight": "Own Balance Sheet"
+  },
+  "lede": "We purchase bulk greige cloth and finished garments outright from 63 audited spinning and weaving mills across South and Southeast Asia. Our salaried QC inspectors control the factory floor, delivering customs-cleared cargo directly to your dock — on one contract, in one currency.",
+  "buttons": {
+    "primary": {
+      "label": "Initiate Landed Costing",
+      "href": "/contact"
+    },
+    "secondary": {
+      "label": "How It Works — 4-Stage Protocol",
+      "href": "/process"
+    }
+  },
+  "guaranteeBadges": [
+    { "text": "48h Open FOB Cost Breakdown", "dotColor": "emerald" },
+    { "text": "Zero Broker Markups" },
+    { "text": "Principal Cargo Liability" }
+  ],
+  "stations": [
+    {
+      "id": "weaving",
+      "name": "Air-Jet Weaving Facility",
+      "badge": "Contract Ref: AS-SD-08 · PDM Audited",
+      "location": "Sindh Mill Unit #08 · Direct Loom Allocation",
+      "capacityLabel": "Running Mill Capacity",
+      "capacityMetric": "480,000 m / month",
+      "imageSrc": "/images/weaving.jpg",
+      "imageAlt": "Industrial air-jet weaving floor with automated high-speed looms",
+      "tag1": "Tsudakoma & Picanol Air-Jets",
+      "tag2": "Active Production Allocation"
+    },
+    {
+      "id": "freight",
+      "name": "Deepwater Ocean Freight",
+      "badge": "B/L Ref: AS-OCEAN-25 · Carrier Volume Agreement",
+      "location": "Port Qasim → Rotterdam, Antwerp & Southampton",
+      "capacityLabel": "Contracted Marine Volume",
+      "capacityMetric": "2,400+ TEU / year",
+      "imageSrc": "/images/maritime.jpg",
+      "imageAlt": "Commercial container vessel berthed at deepwater export terminal",
+      "tag1": "Direct Maersk & MSC Contracts",
+      "tag2": "Full 110% Marine Cargo Liability"
+    },
+    {
+      "id": "quality",
+      "name": "Floor Quality Governance",
+      "badge": "ISO 2859-1 Sampling · Dated Photo Dossiers",
+      "location": "Karachi & Ho Chi Minh City Quality Stations",
+      "capacityLabel": "Quality Defect Ceiling",
+      "capacityMetric": "AQL 2.5 Major / 1.5 Crit",
+      "imageSrc": "/images/inspection.jpg",
+      "imageAlt": "Quality inspector inspecting textile weave with thread counting loupe",
+      "tag1": "Spectrophotometer Delta-E < 0.8",
+      "tag2": "15 Salaried QC Controllers"
+    }
+  ],
+  "bottomMetrics": [
+    { "label": "Running Mill Capacity", "value": "480,000 m / mo" },
+    { "label": "Marine Cargo Volume", "value": "2,400+ TEU / year" },
+    { "label": "Quality Defect Ceiling", "value": "AQL 2.5 Major / 1.5 Crit" }
+  ]
+}

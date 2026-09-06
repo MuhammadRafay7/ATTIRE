@@ -2,8 +2,10 @@
 
 import { useState, FormEvent } from "react";
 import { ArrowRight, Mail, Phone } from "lucide-react";
+import { getGeneralContent } from "@/lib/content";
 
 export default function ContactCta() {
+  const general = getGeneralContent();
   const [commodity, setCommodity] = useState("Wovens & Shirting");
   const [incoterm, setIncoterm] = useState("DDP Landed");
   const [volume, setVolume] = useState("2,000 – 5,000 pcs");
@@ -37,7 +39,7 @@ export default function ContactCta() {
     ].join("\n");
 
     const subject = `RFQ: ${commodity} — ${get("company") || "Commercial Enquiry"}`;
-    const href = `mailto:trade@attireservices.com?subject=${encodeURIComponent(
+    const href = `mailto:${general.contact.email}?subject=${encodeURIComponent(
       subject
     )}&body=${encodeURIComponent(lines)}`;
 
@@ -73,10 +75,10 @@ export default function ContactCta() {
                     Trading Inquiries
                   </div>
                   <a
-                    href="mailto:trade@attireservices.com"
+                    href={`mailto:${general.contact.email}`}
                     className="text-sm font-semibold text-ink hover:text-brass-dark"
                   >
-                    trade@attireservices.com
+                    {general.contact.email}
                   </a>
                 </div>
               </div>
@@ -90,13 +92,13 @@ export default function ContactCta() {
                     London Commercial Desk
                   </div>
                   <a
-                    href="tel:+442071835501"
+                    href={`tel:${general.contact.phone.replace(/\s+/g, "")}`}
                     className="text-sm font-semibold text-ink hover:text-brass-dark"
                   >
-                    +44 20 7183 5501
+                    {general.contact.phone}
                   </a>
                   <div className="text-[11px] text-ink-muted mt-0.5">
-                    Monday &ndash; Friday 08:30 &ndash; 18:00 GMT
+                    {general.contact.hours}
                   </div>
                 </div>
               </div>
@@ -104,18 +106,12 @@ export default function ContactCta() {
 
             {/* Desk Locations Strip */}
             <div className="mt-6 space-y-3">
-              <div className="rounded-lg border border-line-subtle bg-canvas-subtle p-3 text-xs">
-                <div className="font-semibold text-ink">London (Head Office)</div>
-                <div className="text-ink-muted">14 Bevis Marks, EC3A 7BA &middot; UK &amp; European Commercial Terms</div>
-              </div>
-              <div className="rounded-lg border border-line-subtle bg-canvas-subtle p-3 text-xs">
-                <div className="font-semibold text-ink">Karachi (South Asia Sourcing)</div>
-                <div className="text-ink-muted">Shahrah-e-Faisal, Block 6 &middot; 9 Resident QC Inspectors</div>
-              </div>
-              <div className="rounded-lg border border-line-subtle bg-canvas-subtle p-3 text-xs">
-                <div className="font-semibold text-ink">Ho Chi Minh City (Southeast Asia)</div>
-                <div className="text-ink-muted">Le Thanh Ton, District 1 &middot; 6 Resident QC Inspectors</div>
-              </div>
+              {general.offices.map((office) => (
+                <div key={office.id} className="rounded-lg border border-line-subtle bg-canvas-subtle p-3 text-xs">
+                  <div className="font-semibold text-ink">{office.city}</div>
+                  <div className="text-ink-muted">{office.address} &middot; {office.focus}</div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -131,7 +127,7 @@ export default function ContactCta() {
                     RFQ Configurator
                   </span>
                   <span className="font-mono text-[11px] text-ink-muted">
-                    SLA: 48h Response
+                    SLA: {general.contact.rfqSla}
                   </span>
                 </div>
                 <h3 className="mt-1 font-display text-xl font-bold text-ink">
@@ -178,18 +174,24 @@ export default function ContactCta() {
                   <div className="flex flex-col gap-1.5">
                     {["DDP Landed (Warehouse)", "FOB (Port of Origin)", "CIF (Destination Port)"].map(
                       (term) => (
-                        <button
-                          type="button"
+                        <label
                           key={term}
-                          onClick={() => setIncoterm(term)}
-                          className={`rounded-md px-3 py-2 text-xs text-left transition-all border ${
+                          className={`flex items-center gap-2 rounded-md border p-2.5 text-xs cursor-pointer transition-all ${
                             incoterm === term
-                              ? "border-brass bg-brass-soft text-ink font-semibold"
+                              ? "border-navy bg-canvas-subtle font-semibold text-ink"
                               : "border-line bg-paper text-ink-muted hover:text-ink"
                           }`}
                         >
-                          {term}
-                        </button>
+                          <input
+                            type="radio"
+                            name="incoterm"
+                            value={term}
+                            checked={incoterm === term}
+                            onChange={() => setIncoterm(term)}
+                            className="text-navy focus:ring-brass"
+                          />
+                          <span>{term}</span>
+                        </label>
                       )
                     )}
                   </div>
@@ -200,116 +202,114 @@ export default function ContactCta() {
                     3. Estimated Order Volume
                   </label>
                   <div className="flex flex-col gap-1.5">
-                    {["500 – 1,500 pcs (Sampling/Test)", "2,000 – 5,000 pcs (Standard Run)", "10,000+ pcs (Full FCL Container)"].map(
-                      (vol) => (
-                        <button
-                          type="button"
-                          key={vol}
-                          onClick={() => setVolume(vol)}
-                          className={`rounded-md px-3 py-2 text-xs text-left transition-all border ${
-                            volume === vol
-                              ? "border-brass bg-brass-soft text-ink font-semibold"
-                              : "border-line bg-paper text-ink-muted hover:text-ink"
-                          }`}
-                        >
-                          {vol}
-                        </button>
-                      )
-                    )}
+                    {[
+                      "1,000 – 2,000 pcs (Sampling/Test)",
+                      "2,000 – 5,000 pcs (Standard Run)",
+                      "5,000 – 20,000+ pcs (Scale Bulk)",
+                    ].map((vol) => (
+                      <label
+                        key={vol}
+                        className={`flex items-center gap-2 rounded-md border p-2.5 text-xs cursor-pointer transition-all ${
+                          volume === vol
+                            ? "border-navy bg-canvas-subtle font-semibold text-ink"
+                            : "border-line bg-paper text-ink-muted hover:text-ink"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="volume"
+                          value={vol}
+                          checked={volume === vol}
+                          onChange={() => setVolume(vol)}
+                          className="text-navy focus:ring-brass"
+                        />
+                        <span>{vol}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
               </div>
 
-              {/* Step 3: Contact & Company Details */}
-              <div className="mt-6 border-t border-line-subtle pt-6">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-ink mb-3">
-                  4. Commercial Buyer Details
-                </label>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <label htmlFor="company" className="block text-xs font-medium text-ink-muted mb-1">
-                      Company / Brand Name *
-                    </label>
-                    <input
-                      id="company"
-                      name="company"
-                      required
-                      placeholder="e.g. Regent Garments Ltd"
-                      className="w-full rounded-md border border-line bg-canvas-subtle px-3.5 py-2 text-xs text-ink placeholder:text-ink-muted/50 focus:border-navy focus:bg-paper outline-none"
-                    />
-                  </div>
+              {/* Step 3: Company & Contact Inputs */}
+              <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-xs font-mono uppercase text-ink-muted mb-1">
+                    Company / Brand Name *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    name="company"
+                    placeholder="e.g. Norse Heritage Apparel"
+                    className="w-full rounded-md border border-line bg-canvas px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-muted/50 focus:border-navy focus:outline-none"
+                  />
+                </div>
 
-                  <div>
-                    <label htmlFor="name" className="block text-xs font-medium text-ink-muted mb-1">
-                      Your Name &amp; Title *
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      required
-                      placeholder="e.g. James Wilson, Sourcing Director"
-                      className="w-full rounded-md border border-line bg-canvas-subtle px-3.5 py-2 text-xs text-ink placeholder:text-ink-muted/50 focus:border-navy focus:bg-paper outline-none"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-xs font-mono uppercase text-ink-muted mb-1">
+                    Your Name &amp; Title *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    name="name"
+                    placeholder="e.g. Sarah Jenkins (Head of Buying)"
+                    className="w-full rounded-md border border-line bg-canvas px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-muted/50 focus:border-navy focus:outline-none"
+                  />
+                </div>
 
-                  <div>
-                    <label htmlFor="email" className="block text-xs font-medium text-ink-muted mb-1">
-                      Work Email *
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      placeholder="e.g. j.wilson@regent.com"
-                      className="w-full rounded-md border border-line bg-canvas-subtle px-3.5 py-2 text-xs text-ink placeholder:text-ink-muted/50 focus:border-navy focus:bg-paper outline-none"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-xs font-mono uppercase text-ink-muted mb-1">
+                    Work Email *
+                  </label>
+                  <input
+                    required
+                    type="email"
+                    name="email"
+                    placeholder="s.jenkins@brand.com"
+                    className="w-full rounded-md border border-line bg-canvas px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-muted/50 focus:border-navy focus:outline-none"
+                  />
+                </div>
 
-                  <div>
-                    <label htmlFor="destination" className="block text-xs font-medium text-ink-muted mb-1">
-                      Destination Port / Country
-                    </label>
-                    <input
-                      id="destination"
-                      name="destination"
-                      placeholder="e.g. Rotterdam / UK Inland Depot"
-                      className="w-full rounded-md border border-line bg-canvas-subtle px-3.5 py-2 text-xs text-ink placeholder:text-ink-muted/50 focus:border-navy focus:bg-paper outline-none"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-xs font-mono uppercase text-ink-muted mb-1">
+                    Destination Port / Country
+                  </label>
+                  <input
+                    type="text"
+                    name="destination"
+                    placeholder="e.g. Southampton / UK"
+                    className="w-full rounded-md border border-line bg-canvas px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-muted/50 focus:border-navy focus:outline-none"
+                  />
                 </div>
               </div>
 
-              {/* Step 4: Technical Specification */}
-              <div className="mt-5">
-                <label htmlFor="brief" className="block text-xs font-medium text-ink-muted mb-1">
-                  Fabric specification, target landed price or tech pack notes
+              {/* Technical Brief / Notes */}
+              <div className="mt-4">
+                <label className="block text-xs font-mono uppercase text-ink-muted mb-1">
+                  Technical Specification / Garment Overview
                 </label>
                 <textarea
-                  id="brief"
                   name="brief"
                   rows={3}
-                  placeholder="Yarn count, weight in GSM, wash standard, target landed ceiling, ship window — whatever you have."
-                  className="w-full rounded-md border border-line bg-canvas-subtle px-3.5 py-2.5 text-xs text-ink placeholder:text-ink-muted/50 focus:border-navy focus:bg-paper outline-none"
+                  placeholder="Outline yarn weight, wash requirements, target delivery date, or note that a tech pack will be attached to the email."
+                  className="w-full rounded-md border border-line bg-canvas px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-muted/50 focus:border-navy focus:outline-none"
                 />
               </div>
 
-              {/* Submit Row */}
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-line-subtle pt-5">
+              {/* Submission Button */}
+              <div className="mt-6">
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center gap-2 rounded-md bg-navy px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-md hover:bg-navy-soft transition-all"
+                  className="w-full flex items-center justify-center gap-2 rounded-lg bg-navy py-3.5 text-sm font-semibold uppercase tracking-wider text-white shadow-sm transition-all hover:bg-navy-soft"
                 >
                   <span>Transmit Commercial RFQ</span>
                   <ArrowRight className="h-4 w-4 text-brass-light" />
                 </button>
-                <span className="text-[11px] font-mono text-ink-muted">
-                  Pre-fills structured email &middot; Attach tech pack PDF there
-                </span>
               </div>
 
               {status && (
-                <div className="mt-4 rounded-lg bg-brass-soft/80 border border-brass/40 p-3 text-xs text-ink leading-relaxed font-medium">
+                <div className="mt-4 rounded-lg bg-emerald-50 border border-emerald-300 p-3 text-xs text-emerald-900 leading-relaxed font-mono">
                   {status}
                 </div>
               )}

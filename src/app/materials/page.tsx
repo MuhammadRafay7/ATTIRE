@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import Materials from "@/components/Materials";
 import CtaBanner from "@/components/CtaBanner";
+import { getMaterialsContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Textile & Material Archive",
@@ -9,26 +10,9 @@ export const metadata: Metadata = {
     "Explore fabric constructions Attire Services holds direct mill contract capacity for: selvedge denim, 120s combed shirting poplin, chino twill, circular knits, and heavy duck canvas.",
 };
 
-const FIBER_STANDARDS = [
-  {
-    title: "100% Ring-Spun Long-Staple Cotton",
-    detail: "Sourced from certified Indus Basin & Xinjiang long-staple crops with staple length > 32mm for high tensile durability and minimal pilling.",
-  },
-  {
-    title: "GOTS & BCI Certified Traceability",
-    detail: "Every bale of organic fiber carries a verified transaction certificate (TC) tracking lot number from ginner through ring spinning frames.",
-  },
-  {
-    title: "Liquid Ammonia & Mercerization",
-    detail: "Permanent luster and fiber swell achieved via tension mercerization tanks, resulting in superior wash fastness and silky tactile hand-feel.",
-  },
-  {
-    title: "Eco-Conscious Dyeing & Zero Discharge (ZDHC)",
-    detail: "Reactive and sulfur dyehouses operating under Level 3 ZDHC chemical discharge guidelines with closed-loop effluent treatment plants (ETP).",
-  },
-];
-
 export default function MaterialsPage() {
+  const content = getMaterialsContent();
+
   return (
     <>
       <PageHeader
@@ -53,7 +37,7 @@ export default function MaterialsPage() {
           </div>
 
           <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {FIBER_STANDARDS.map((s) => (
+            {content.fiberStandards.map((s) => (
               <div
                 key={s.title}
                 className="paper-card rounded-xl p-6 flex flex-col justify-between"
@@ -88,26 +72,13 @@ export default function MaterialsPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 text-xs font-mono">
-              <div className="rounded-lg bg-paper p-3 border border-line">
-                <div className="text-ink font-semibold">Lightweight Shirting</div>
-                <div className="text-brass-dark mt-0.5">110 &ndash; 140 GSM</div>
-                <div className="text-ink-muted text-[11px]">3.2 &ndash; 4.1 oz/yd&sup2;</div>
-              </div>
-              <div className="rounded-lg bg-paper p-3 border border-line">
-                <div className="text-ink font-semibold">T-Shirt &amp; Polo Knits</div>
-                <div className="text-brass-dark mt-0.5">180 &ndash; 240 GSM</div>
-                <div className="text-ink-muted text-[11px]">5.3 &ndash; 7.1 oz/yd&sup2;</div>
-              </div>
-              <div className="rounded-lg bg-paper p-3 border border-line">
-                <div className="text-ink font-semibold">Chinos &amp; Overshirts</div>
-                <div className="text-brass-dark mt-0.5">260 &ndash; 320 GSM</div>
-                <div className="text-ink-muted text-[11px]">7.7 &ndash; 9.4 oz/yd&sup2;</div>
-              </div>
-              <div className="rounded-lg bg-paper p-3 border border-line">
-                <div className="text-ink font-semibold">Heavy Denim &amp; Canvas</div>
-                <div className="text-brass-dark mt-0.5">380 &ndash; 510 GSM</div>
-                <div className="text-ink-muted text-[11px]">11.2 &ndash; 15.0 oz/yd&sup2;</div>
-              </div>
+              {content.weightConversions.map((w) => (
+                <div key={w.name} className="rounded-lg bg-paper p-3 border border-line">
+                  <div className="text-ink font-semibold">{w.name}</div>
+                  <div className="text-brass-dark mt-0.5">{w.gsm}</div>
+                  <div className="text-ink-muted text-[11px]">{w.oz}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

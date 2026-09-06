@@ -1,0 +1,164 @@
+{
+  "materials": [
+    {
+      "id": "denim-145",
+      "name": "Raw Selvedge Denim",
+      "category": "denim",
+      "weave": "3×1 right-hand twill, red ID line",
+      "comp": "100% ring-spun cotton",
+      "yarnCount": "7s × 7s open-end slub",
+      "weight": "490 gsm",
+      "weightOz": "14.5 oz/yd²",
+      "moq": "1,500 m / wash",
+      "shrinkage": "Warp < 2.0% (sanforized)",
+      "tariff": "HS 5209.32.00",
+      "image": "/images/denim.jpg",
+      "finish": "Sanforized, skew-controlled"
+    },
+    {
+      "id": "poplin-120",
+      "name": "Combed Shirting Poplin",
+      "category": "woven",
+      "weave": "Plain weave 1×1, high density",
+      "comp": "100% combed long-staple cotton",
+      "yarnCount": "120s/2 × 120s/2 two-ply",
+      "weight": "115 gsm",
+      "weightOz": "3.4 oz/yd²",
+      "moq": "800 m / colour",
+      "shrinkage": "Warp < 1.0% / Weft < 1.0%",
+      "tariff": "HS 5208.32.10",
+      "image": "/images/poplin.jpg",
+      "finish": "Mercerized, liquid ammonia press"
+    },
+    {
+      "id": "twill-290",
+      "name": "Mercerized Chino Twill",
+      "category": "denim",
+      "weave": "2×1 left-hand twill, steep angle",
+      "comp": "98% cotton / 2% Roica elastane",
+      "yarnCount": "30s/2 × 20s + 40D",
+      "weight": "290 gsm",
+      "weightOz": "8.6 oz/yd²",
+      "moq": "1,200 m / colour",
+      "shrinkage": "Warp < 1.8% / Weft < 1.5%",
+      "tariff": "HS 5209.12.00",
+      "image": "/images/twill.jpg",
+      "finish": "Double mercerized, peach skin hand"
+    },
+    {
+      "id": "oxford-140",
+      "name": "Yarn-Dyed Oxford Cloth",
+      "category": "woven",
+      "weave": "2×1 basket weave (Oxford)",
+      "comp": "100% organic ring-spun cotton",
+      "yarnCount": "40s/2 × 20s/1",
+      "weight": "140 gsm",
+      "weightOz": "4.1 oz/yd²",
+      "moq": "800 m / colour",
+      "shrinkage": "Warp < 1.5% / Weft < 1.2%",
+      "tariff": "HS 5208.42.00",
+      "image": "/images/oxford.jpg",
+      "finish": "Garment wash ready, resin free"
+    },
+    {
+      "id": "canvas-405",
+      "name": "Heavyweight Duck Canvas",
+      "category": "heavy",
+      "weave": "2×2 plied-yarn duck basket weave",
+      "comp": "100% unbleached raw cotton",
+      "yarnCount": "10s/2 × 10s/2 heavy ply",
+      "weight": "405 gsm",
+      "weightOz": "12.0 oz/yd²",
+      "moq": "1,000 m / run",
+      "shrinkage": "Warp < 2.5% (natural state)",
+      "tariff": "HS 5209.11.00",
+      "image": "/images/canvas.jpg",
+      "finish": "Natural greige or water-repellent DWR"
+    },
+    {
+      "id": "jersey-200",
+      "name": "Combed Single Jersey",
+      "category": "knit",
+      "weave": "Circular knit, 24 gauge",
+      "comp": "95% combed organic cotton / 5% spandex",
+      "yarnCount": "32s/1 combed compact",
+      "weight": "200 gsm",
+      "weightOz": "5.9 oz/yd²",
+      "moq": "600 kg / shade",
+      "shrinkage": "Length < 3.0% / Width < 2.5%",
+      "tariff": "HS 6006.22.00",
+      "image": "/images/jersey.jpg",
+      "finish": "Bio-polished enzymes, anti-pilling"
+    },
+    {
+      "id": "corduroy-320",
+      "name": "11-Wale Cut Pile Corduroy",
+      "category": "heavy",
+      "weave": "11-wale dense rib cut pile",
+      "comp": "100% BCI sustainable cotton",
+      "yarnCount": "16s × 20s + 32s pile",
+      "weight": "320 gsm",
+      "weightOz": "9.4 oz/yd²",
+      "moq": "900 m / colour",
+      "shrinkage": "Warp < 2.0% / Weft < 1.5%",
+      "tariff": "HS 5801.22.00",
+      "image": "/images/corduroy.jpg",
+      "finish": "Soft brush tumble, luster wash"
+    },
+    {
+      "id": "flannel-200",
+      "name": "Brushed Twill Flannel",
+      "category": "woven",
+      "weave": "2×2 broken twill plaid",
+      "comp": "100% ring-spun brushed cotton",
+      "yarnCount": "20s/1 × 10s/1 soft twist",
+      "weight": "200 gsm",
+      "weightOz": "5.9 oz/yd²",
+      "moq": "1,000 m / pattern",
+      "shrinkage": "Warp < 2.0% / Weft < 2.0%",
+      "tariff": "HS 5208.43.00",
+      "image": "/images/flannel.jpg",
+      "finish": "Double-face mechanical fleece brush"
+    }
+  ],
+  "fiberStandards": [
+    {
+      "title": "100% Ring-Spun Long-Staple Cotton",
+      "detail": "Sourced from certified Indus Basin & Xinjiang long-staple crops with staple length > 32mm for high tensile durability and minimal pilling."
+    },
+    {
+      "title": "GOTS & BCI Certified Traceability",
+      "detail": "Every bale of organic fiber carries a verified transaction certificate (TC) tracking lot number from ginner through ring spinning frames."
+    },
+    {
+      "title": "Liquid Ammonia & Mercerization",
+      "detail": "Permanent luster and fiber swell achieved via tension mercerization tanks, resulting in superior wash fastness and silky tactile hand-feel."
+    },
+    {
+      "title": "Eco-Conscious Dyeing & Zero Discharge (ZDHC)",
+      "detail": "Reactive and sulfur dyehouses operating under Level 3 ZDHC chemical discharge guidelines with closed-loop effluent treatment plants (ETP)."
+    }
+  ],
+  "weightConversions": [
+    {
+      "name": "Lightweight Shirting",
+      "gsm": "110 – 140 GSM",
+      "oz": "3.2 – 4.1 oz/yd²"
+    },
+    {
+      "name": "T-Shirt & Polo Knits",
+      "gsm": "180 – 240 GSM",
+      "oz": "5.3 – 7.1 oz/yd²"
+    },
+    {
+      "name": "Chinos & Overshirts",
+      "gsm": "260 – 320 GSM",
+      "oz": "7.7 – 9.4 oz/yd²"
+    },
+    {
+      "name": "Heavy Denim & Canvas",
+      "gsm": "380 – 510 GSM",
+      "oz": "11.2 – 15.0 oz/yd²"
+    }
+  ]
+}

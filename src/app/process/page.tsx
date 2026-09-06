@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { ShieldAlert, Clock, FileWarning, Microscope, Scale } from "lucide-react";
+import { ShieldAlert, Clock, FileWarning, Microscope, Scale, HelpCircle, type LucideIcon } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import Process from "@/components/Process";
 import CtaBanner from "@/components/CtaBanner";
+import { getProcessContent } from "@/lib/content";
+
+const RISK_ICON_MAP: Record<string, LucideIcon> = {
+  ShieldAlert,
+  Clock,
+  FileWarning,
+};
 
 export const metadata: Metadata = {
   title: "The 4-Stage Protocol & Risk Architecture",
@@ -11,31 +18,13 @@ export const metadata: Metadata = {
     "How apparel orders move through Attire Services from tech pack to landed delivery, and the three systemic supply chain risks we actively engineer out.",
 };
 
-const RISKS = [
-  {
-    icon: ShieldAlert,
-    title: "Shade Variation & Metamerism",
-    problem: "Dye lots inevitably drift across multiple thousand-meter runs under different ambient factory conditions.",
-    solution:
-      "We cut physical shade bands across every dye lot, sort by lot code, and carton-pack by continuous band. A retail store never unpacks two divergent tones on the same sales rail. All lab dips are evaluated under dual illuminants (D65 daylight and TL84 store lighting) with Delta-E kept below 0.80.",
-  },
-  {
-    icon: Clock,
-    title: "Ex-Factory Delay & Port Rollovers",
-    problem: "Fabric lead times slip, bottlenecking final sewing and resulting in missed ocean carrier cutoffs.",
-    solution:
-      "We build a mandatory 10-day buffer between planned ex-factory and vessel sailing cutoffs. Crucially, we hold reserved air-freight contract allocations on standby. Because we own the goods as principal, if the production delay was within our control, the air freight differential is absorbed by us &mdash; not billed to you.",
-  },
-  {
-    icon: FileWarning,
-    title: "Tariff Misclassification & Customs Friction",
-    problem: "A hasty or inaccurate HS code assignment triggers customs holds, retroactive duty clawbacks, or port demurrage.",
-    solution:
-      "Classification is audited twice: first by our London commercial team during initial costing, and second by a licensed customs broker prior to ocean bill of lading issuance. We verify fiber content breakdown down to 0.1% to guarantee zero tariff reassessment disputes upon arrival.",
-  },
-];
-
 export default function ProcessPage() {
+  const content = getProcessContent();
+  const risks = content.risks.map((r) => ({
+    ...r,
+    icon: RISK_ICON_MAP[r.iconName] || HelpCircle,
+  }));
+
   return (
     <>
       <PageHeader
@@ -118,7 +107,7 @@ export default function ProcessPage() {
           </div>
 
           <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-7 lg:grid-cols-3">
-            {RISKS.map((r) => (
+            {risks.map((r) => (
               <div
                 key={r.title}
                 className="rounded-2xl border border-white/12 bg-white/[0.03] p-7 flex flex-col justify-between"

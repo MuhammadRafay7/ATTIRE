@@ -4,61 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
-
-interface ShowcaseStation {
-  id: string;
-  name: string;
-  badge: string;
-  location: string;
-  capacityLabel: string;
-  capacityMetric: string;
-  imageSrc: string;
-  imageAlt: string;
-  tag1: string;
-  tag2: string;
-}
-
-const STATIONS: ShowcaseStation[] = [
-  {
-    id: "weaving",
-    name: "Air-Jet Weaving Facility",
-    badge: "Contract Ref: AS-SD-08 · PDM Audited",
-    location: "Sindh Mill Unit #08 · Direct Loom Allocation",
-    capacityLabel: "Running Mill Capacity",
-    capacityMetric: "480,000 m / month",
-    imageSrc: "/images/weaving.jpg",
-    imageAlt: "Industrial air-jet weaving floor with automated high-speed looms",
-    tag1: "Tsudakoma & Picanol Air-Jets",
-    tag2: "Active Production Allocation",
-  },
-  {
-    id: "freight",
-    name: "Deepwater Ocean Freight",
-    badge: "B/L Ref: AS-OCEAN-25 · Carrier Volume Agreement",
-    location: "Port Qasim → Rotterdam, Antwerp & Southampton",
-    capacityLabel: "Contracted Marine Volume",
-    capacityMetric: "2,400+ TEU / year",
-    imageSrc: "/images/maritime.jpg",
-    imageAlt: "Commercial container vessel berthed at deepwater export terminal",
-    tag1: "Direct Maersk & MSC Contracts",
-    tag2: "Full 110% Marine Cargo Liability",
-  },
-  {
-    id: "quality",
-    name: "Floor Quality Governance",
-    badge: "ISO 2859-1 Sampling · Dated Photo Dossiers",
-    location: "Karachi & Ho Chi Minh City Quality Stations",
-    capacityLabel: "Quality Defect Ceiling",
-    capacityMetric: "AQL 2.5 Major / 1.5 Crit",
-    imageSrc: "/images/inspection.jpg",
-    imageAlt: "Quality inspector inspecting textile weave with thread counting loupe",
-    tag1: "Spectrophotometer Delta-E < 0.8",
-    tag2: "15 Salaried QC Controllers",
-  },
-];
+import { getHeroContent } from "@/lib/content";
 
 export default function Hero() {
-  const [activeTab, setActiveTab] = useState<ShowcaseStation>(STATIONS[0]);
+  const content = getHeroContent();
+  const [activeTab, setActiveTab] = useState(content.stations[0]);
 
   return (
     <section className="relative overflow-hidden bg-canvas text-ink border-b border-line">
@@ -70,9 +20,9 @@ export default function Hero() {
         <div className="mx-auto max-w-3xl text-center sm:max-w-4xl">
           {/* Main Headline */}
           <h1 className="font-display text-4xl font-bold leading-[1.08] tracking-tight text-ink sm:text-5xl md:text-6xl lg:text-[4.15rem]">
-            Direct Principal Apparel Trading, Handled on Our{" "}
+            {content.title.lead}{" "}
             <span className="relative inline-block whitespace-nowrap text-brass-dark">
-              Own Balance Sheet
+              {content.title.highlight}
               {/* Refined Hand-Crafted Underline Stroke */}
               <svg
                 className="absolute -bottom-2.5 left-0 w-full text-brass/40"
@@ -93,39 +43,40 @@ export default function Hero() {
 
           {/* Subtitle / Value Lede */}
           <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-ink-muted">
-            We purchase bulk greige cloth and finished garments outright from 63 audited spinning and weaving mills across
-            South and Southeast Asia. Our salaried QC inspectors control the factory floor, delivering
-            customs-cleared cargo directly to your dock &mdash; on one contract, in one currency.
+            {content.lede}
           </p>
 
           {/* Dual Action Buttons */}
           <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3.5">
             <Link
-              href="/contact"
+              href={content.buttons.primary.href}
               className="inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-lg bg-navy px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-navy-soft hover:shadow-md"
             >
-              <span>Initiate Landed Costing</span>
+              <span>{content.buttons.primary.label}</span>
               <ArrowRight className="h-4 w-4" strokeWidth={2} />
             </Link>
 
             <Link
-              href="/process"
+              href={content.buttons.secondary.href}
               className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg border border-line bg-paper px-6 py-3.5 text-sm font-semibold text-ink shadow-sm transition-all duration-200 hover:bg-canvas-subtle"
             >
-              <span>How It Works &mdash; 4-Stage Protocol</span>
+              <span>{content.buttons.secondary.label}</span>
             </Link>
           </div>
 
           {/* Institutional Reassurance Guarantee Line */}
           <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-mono text-ink-muted">
-            <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
-              <span>48h Open FOB Cost Breakdown</span>
-            </span>
-            <span className="hidden sm:inline text-line-dark">&bull;</span>
-            <span>Zero Broker Markups</span>
-            <span className="hidden sm:inline text-line-dark">&bull;</span>
-            <span>Principal Cargo Liability</span>
+            {content.guaranteeBadges.map((badge, idx) => (
+              <span key={badge.text} className="flex items-center gap-1.5">
+                {badge.dotColor && (
+                  <span className={`h-1.5 w-1.5 rounded-full ${badge.dotColor === "emerald" ? "bg-emerald-600" : "bg-brass"}`} />
+                )}
+                <span>{badge.text}</span>
+                {idx < content.guaranteeBadges.length - 1 && (
+                  <span className="hidden sm:inline text-line-dark ml-4">&bull;</span>
+                )}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -135,7 +86,7 @@ export default function Hero() {
             {/* Interactive Facility Station Switcher Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-line bg-canvas-subtle/70 px-4 py-2 text-xs font-mono">
               <div className="flex items-center gap-1 overflow-x-auto py-1">
-                {STATIONS.map((station) => {
+                {content.stations.map((station) => {
                   const isActive = activeTab.id === station.id;
                   return (
                     <button
@@ -194,18 +145,12 @@ export default function Hero() {
 
             {/* Bottom 3-Pillar Operational Footnote Bar */}
             <div className="grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:divide-y-0 sm:divide-x border-t border-line bg-paper text-xs font-mono">
-              <div className="p-3.5 sm:p-4 text-center">
-                <span className="text-ink-muted uppercase text-[10px] tracking-wider block">Running Mill Capacity</span>
-                <span className="font-bold text-ink text-sm sm:text-base mt-0.5 block">480,000 m / mo</span>
-              </div>
-              <div className="p-3.5 sm:p-4 text-center">
-                <span className="text-ink-muted uppercase text-[10px] tracking-wider block">Marine Cargo Volume</span>
-                <span className="font-bold text-ink text-sm sm:text-base mt-0.5 block">2,400+ TEU / year</span>
-              </div>
-              <div className="p-3.5 sm:p-4 text-center">
-                <span className="text-ink-muted uppercase text-[10px] tracking-wider block">Quality Defect Ceiling</span>
-                <span className="font-bold text-ink text-sm sm:text-base mt-0.5 block">AQL 2.5 Major / 1.5 Crit</span>
-              </div>
+              {content.bottomMetrics.map((metric) => (
+                <div key={metric.label} className="p-3.5 sm:p-4 text-center">
+                  <span className="text-ink-muted uppercase text-[10px] tracking-wider block">{metric.label}</span>
+                  <span className="font-bold text-ink text-sm sm:text-base mt-0.5 block">{metric.value}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>

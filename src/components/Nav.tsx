@@ -5,15 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import Logo from "./Logo";
-
-const LINKS = [
-  { href: "/capabilities", label: "Capabilities" },
-  { href: "/process", label: "How It Works" },
-  { href: "/materials", label: "Material Library" },
-  { href: "/company", label: "The Company" },
-];
+import { getGeneralContent } from "@/lib/content";
 
 export default function Nav() {
+  const general = getGeneralContent();
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -28,7 +23,7 @@ export default function Nav() {
 
         {/* Desktop Links */}
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main Navigation">
-          {LINKS.map((l) => {
+          {general.navLinks.map((l) => {
             const active = pathname === l.href;
             return (
               <Link
@@ -81,7 +76,7 @@ export default function Nav() {
           className="border-t border-line bg-canvas px-6 py-5 lg:hidden animate-in slide-in-from-top-2 duration-200"
         >
           <div className="flex flex-col gap-1.5">
-            {LINKS.map((l) => {
+            {general.navLinks.map((l) => {
               const active = pathname === l.href;
               return (
                 <Link
@@ -108,7 +103,7 @@ export default function Nav() {
                 <ArrowUpRight className="h-4 w-4 text-brass-light" />
               </Link>
               <div className="mt-3 text-center text-xs font-mono text-ink-muted">
-                London Desk: +44 20 7183 5501
+                London Desk: {general.contact.phone}
               </div>
             </div>
           </div>

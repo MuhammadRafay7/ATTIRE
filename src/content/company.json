@@ -1,0 +1,47 @@
+{
+  "story": {
+    "eyebrow": "The Trading House",
+    "title": "A direct principal trading house — not an agency broker",
+    "lede": "Founded in 2009 by three partners who spent their careers running factory floor quality operations. We manage production from the cutting table and dye vat — not from an ivory tower spreadsheet.",
+    "sectionTitle": "Why we operate as a direct buyer rather than a broker",
+    "paragraphs": [
+      "Before founding Attire Services in 2009, our founding partners ran technical quality and export production for two of Pakistan's premier woven apparel exporters in Karachi. Season after season, they watched international buyers get let down the same way: an agency broker introduces a factory, collects a 7% commission from the mill, and vanishes the instant quality fails or shipments slip.",
+      "Because the broker carries zero financial liability, they have no leverage when a factory falls behind schedule. The buyer is left holding defective stock or paying exorbitant air freight.",
+      "We built Attire Services on the opposite commercial architecture: We purchase the finished goods from the mill on our own balance sheet, and sell them directly to you on agreed landed terms.",
+      "The commercial risk between factory ex-factory and your loading dock belongs to us. That is why our resident QC inspectors have the unilateral authority to halt a container without asking for anyone's permission."
+    ],
+    "imageSrc": "/images/maritime.jpg",
+    "imageAlt": "Deepwater commercial container terminal at dawn",
+    "imageBadge": "Global Ocean Freight · Export Terminal",
+    "imageSub": "2,400+ TEU moved annually · 100% principal contract freight"
+  },
+  "standards": [
+    {
+      "title": "Zero Unaudited Subcontracting",
+      "body": "Every single sewing line, dye vat, and laundry facility touching an order must be pre-audited and disclosed before fabric is cut. Any mill that subcontracts without our explicit written sign-off permanently forfeits its contract."
+    },
+    {
+      "title": "Never Ship Marginal or Short Lots",
+      "body": "If a production lot fails our final statistical AQL 2.5 audit, it does not sail. We absorb the schedule delay and commercial penalties ourselves rather than pass substandard goods into your retail season."
+    },
+    {
+      "title": "Zero Hidden Factory Commissions",
+      "body": "Our trading margin is a transparent, disclosed line item on every cost sheet. We never accept backhand rebates, agency kickbacks, or secondary payments from fabric mills."
+    },
+    {
+      "title": "Strict Commercial Exclusivity on Developments",
+      "body": "When a buyer co-finances a proprietary weave, finish, or wash development, that construction belongs exclusively to that brand for the season. We never market your development to competing labels."
+    }
+  ],
+  "governance": {
+    "title": "Direct Balance Sheet Accountability",
+    "body": "Attire Services has remained proudly independent and self-funded since 2009. We have never accepted outside venture capital or private equity debt, ensuring our operational priorities remain aligned entirely with our retail buyers."
+  },
+  "factoryVisits": {
+    "eyebrow": "Buyer Inspection Protocol",
+    "title": "Come and inspect the factory floor during your pre-production run",
+    "body": "Buyers placing a first bulk contract are invited to attend the mill in Karachi or Ho Chi Minh City during pre-production sampling. We arrange all local security and logistics, and you choose the day of your audit — unannounced factory visits are part of our standard contract.",
+    "ctaLabel": "Arrange Factory Inspection",
+    "ctaEmail": "mailto:trade@attireservices.com?subject=Mill%20Floor%20Visit%20Inquiry"
+  }
+}

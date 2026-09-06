@@ -1,0 +1,115 @@
+{
+  "stages": [
+    {
+      "n": "01",
+      "title": "Enquiry & Open-Book Costing",
+      "subtitle": "Turnaround: 48 working hours",
+      "summary": "Send a tech pack, spec sheet or reference garment. Within two working days you receive a feasibility assessment and an open FOB cost sheet with every fiber, labor and shipping line item disclosed.",
+      "documentName": "Open FOB Cost Breakdown Sheet",
+      "documentType": "Document Deliverable 01",
+      "docIconName": "FileSpreadsheet",
+      "content": {
+        "reference": "SPEC-COST-2025-410",
+        "items": [
+          { "label": "Raw Fiber / Greige Yarn (Ring-spun)", "value": "$3.95 (41.2%)" },
+          { "label": "Dyeing & Chemical Finishing", "value": "$1.38 (14.4%)" },
+          { "label": "CMT Labor (Cut, Make & Trim)", "value": "$2.40 (25.0%)" },
+          { "label": "Accessories, Trims & YKK Zips", "value": "$0.72 (7.5%)" },
+          { "label": "Export Packaging & Export Cartons", "value": "$0.32 (3.3%)" },
+          { "label": "Port Drayage & Customs Documentation", "value": "$0.31 (3.2%)" },
+          { "label": "Attire Services Disclosed Margin", "value": "$0.52 (5.4%)", "highlight": true },
+          { "label": "Total Landed FOB Unit Price", "value": "$9.60 / pc", "highlight": true }
+        ],
+        "stampText": "CERTIFIED OPEN-BOOK · ZERO SECONDARY COMMISSIONS",
+        "footerNote": "Calculated for 3,000 unit order window · 60-day price validity"
+      }
+    },
+    {
+      "n": "02",
+      "title": "Sampling, Lab Dips & Booking",
+      "subtitle": "Proto, Fit & Sealed PP Sample",
+      "summary": "We cut proto patterns, run lab dips against your Pantone references, and submit physical fit garments. Bulk line capacity is only committed once the pre-production sample is signed and sealed.",
+      "documentName": "Lab Dip & Fit Approval Dossier",
+      "documentType": "Document Deliverable 02",
+      "docIconName": "FileCheck",
+      "content": {
+        "reference": "PROTO-FIT-2025-88",
+        "items": [
+          { "label": "Pantone TCX Spectrophotometer Match", "value": "Delta-E < 0.75 PASS" },
+          { "label": "Warp / Weft Dimensional Shrinkage", "value": "< 1.2% (ISO 6330)" },
+          { "label": "Wash Fastness & Rubbing Crocking", "value": "Grade 4-5 (ISO 105)" },
+          { "label": "Graded Spec Sheet Tolerances", "value": "± 0.5 cm verified" },
+          { "label": "Pre-Production Sample Sign-off", "value": "Physical PP Sealed", "highlight": true }
+        ],
+        "stampText": "SEALED PRE-PRODUCTION MASTER · RUN AUTHORIZED",
+        "footerNote": "Bulk yarn spinning scheduled on signing · 14-day sample turn"
+      }
+    },
+    {
+      "n": "03",
+      "title": "Floor Production & Salaried QC",
+      "subtitle": "Inline & Final AQL 2.5 Audit",
+      "summary": "Our own salaried inspectors sit on the cutting, sewing, and pressing lines. AQL 2.5 statistical audits, 100% needle detection, and dated photo logs are completed before goods leave the factory floor.",
+      "documentName": "Final AQL 2.5 Inspection Certificate",
+      "documentType": "Document Deliverable 03",
+      "docIconName": "ClipboardList",
+      "content": {
+        "reference": "QC-AQL-2025-0149",
+        "items": [
+          { "label": "Inspection Standard Applied", "value": "ISO 2859-1 Level II" },
+          { "label": "Lot Size / Sample Size Drawn", "value": "3,200 pcs / 200 units" },
+          { "label": "Major Defect Ceiling (Max 10)", "value": "3 detected — PASS" },
+          { "label": "Critical Defect Tolerance", "value": "0 detected — PASS" },
+          { "label": "100% Metal / Needle Detection", "value": "Zero ferrous trips" },
+          { "label": "Carton Barcode & Polybag Audit", "value": "100% verified" }
+        ],
+        "stampText": "AQL 2.5 PASSED · SHIPMENT RELEASE AUTHORIZED",
+        "footerNote": "Full photo archive and dimensional charts transmitted to buyer"
+      }
+    },
+    {
+      "n": "04",
+      "title": "Freight, Customs & Dock Landed",
+      "subtitle": "FCL, LCL or DDP Direct Delivery",
+      "summary": "We coordinate container booking, export customs, bill of lading issuance, and destination import clearance. Goods arrive at your dock on agreed Incoterms with zero hidden clearance surcharges.",
+      "documentName": "Commercial Trade & Bill of Lading Pack",
+      "documentType": "Document Deliverable 04",
+      "docIconName": "Stamp",
+      "content": {
+        "reference": "BOL-DDP-2025-9921",
+        "items": [
+          { "label": "Clean On-Board Ocean B/L", "value": "Carrier: Maersk Line" },
+          { "label": "GSP Form A / EUR.1 Cert of Origin", "value": "Chamber stamped" },
+          { "label": "Dual HS Code Verification", "value": "Tariff: 6205.20.00" },
+          { "label": "UK / EU Customs Entry Clearance", "value": "Direct DDP filing" },
+          { "label": "Marine Cargo Insurance", "value": "Institute Cargo Cl. (A) 110%" }
+        ],
+        "stampText": "CUSTOMS CLEARED · LANDED DDP DELIVERED",
+        "footerNote": "Delivery scheduled directly to buyer distribution center dock"
+      }
+    }
+  ],
+  "risks": [
+    {
+      "id": "shade",
+      "iconName": "ShieldAlert",
+      "title": "Shade Variation & Metamerism",
+      "problem": "Dye lots inevitably drift across multiple thousand-meter runs under different ambient factory conditions.",
+      "solution": "We cut physical shade bands across every dye lot, sort by lot code, and carton-pack by continuous band. A retail store never unpacks two divergent tones on the same sales rail. All lab dips are evaluated under dual illuminants (D65 daylight and TL84 store lighting) with Delta-E kept below 0.80."
+    },
+    {
+      "id": "delay",
+      "iconName": "Clock",
+      "title": "Ex-Factory Delay & Port Rollovers",
+      "problem": "Fabric lead times slip, bottlenecking final sewing and resulting in missed ocean carrier cutoffs.",
+      "solution": "We build a mandatory 10-day buffer between planned ex-factory and vessel sailing cutoffs. Crucially, we hold reserved air-freight contract allocations on standby. Because we own the goods as principal, if the production delay was within our control, the air freight differential is absorbed by us — not billed to you."
+    },
+    {
+      "id": "tariff",
+      "iconName": "FileWarning",
+      "title": "Tariff Misclassification & Customs Friction",
+      "problem": "A hasty or inaccurate HS code assignment triggers customs holds, retroactive duty clawbacks, or port demurrage.",
+      "solution": "Classification is audited twice: first by our London commercial team during initial costing, and second by a licensed customs broker prior to ocean bill of lading issuance. We verify fiber content breakdown down to 0.1% to guarantee zero tariff reassessment disputes upon arrival."
+    }
+  ]
+}

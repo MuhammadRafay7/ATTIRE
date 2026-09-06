@@ -1,0 +1,108 @@
+{
+  "features": [
+    {
+      "id": "procurement",
+      "iconName": "Search",
+      "pillar": "Procurement & Costing",
+      "title": "Mill sourcing & open-book costing",
+      "body": "We match your yarn construction, MOQ and price ceiling against mills we hold standing capacity with, and return an open cost comparison showing raw fiber %, CMT, dyeing and logistics — never an opaque markup.",
+      "points": [
+        "Open-book cost breakdown",
+        "Greige yarn & fiber provenance",
+        "Guaranteed loom capacity booking"
+      ]
+    },
+    {
+      "id": "sampling",
+      "iconName": "Ruler",
+      "pillar": "Technical Sampling",
+      "title": "Technical fit & sealed pre-production",
+      "body": "Proto, fit, and pre-production samples run through our own on-site merchandisers. We review grading, balance shrinkage, and seal the pre-production sample before bulk yardage is touched.",
+      "points": [
+        "Tech-pack development & grading",
+        "Pantone TCX spectrophotometer lab dips",
+        "Sealed master PP sample"
+      ]
+    },
+    {
+      "id": "qc",
+      "iconName": "ScanSearch",
+      "pillar": "Quality Control",
+      "title": "Salaried on-site inline & final QC",
+      "body": "Our own inspectors sit on the factory line during cutting, sewing and pressing, working to AQL 2.5 on majors and 1.5 on criticals — not a third-party checklist received weeks after the fact.",
+      "points": [
+        "Mid-production inline checkpoints",
+        "AQL 2.5 statistical final inspection",
+        "100% metal detection & dated photo logs"
+      ]
+    },
+    {
+      "id": "accreditation",
+      "iconName": "FileCheck2",
+      "pillar": "Accreditation",
+      "title": "Accredited testing & chain of custody",
+      "body": "GOTS, OEKO-TEX Standard 100, BSCI, and Sedex SMETA 4-pillar certifications maintained with accredited SGS and Intertek lab test reports on file for every shipped production lot.",
+      "points": [
+        "GOTS & OEKO-TEX chain of custody",
+        "BSCI & Sedex labor audits on file",
+        "SGS / Intertek dimensional & colorfastness tests"
+      ]
+    },
+    {
+      "id": "freight",
+      "iconName": "Ship",
+      "pillar": "Freight & Customs",
+      "title": "Freight, duty & customs clearance",
+      "body": "FCL container contracts, LCL consolidation and chartered air freight quoted under clear Incoterms (FOB, CIF, or landed DDP), with destination duty classifications verified before the vessel sails.",
+      "points": [
+        "FCL, LCL consolidation & air freight",
+        "Clear FOB, CIF, or landed DDP terms",
+        "Dual-checked HS tariff classification"
+      ]
+    },
+    {
+      "id": "documentation",
+      "iconName": "FileStack",
+      "pillar": "Trade Documentation",
+      "title": "Complete international trade documentation",
+      "body": "Commercial invoice, itemized packing list, clean on-board ocean bill of lading, chamber certificate of origin, and preferential trade duty forms (GSP Form A / EUR.1) completed before sailing.",
+      "points": [
+        "Full commercial trade document pack",
+        "Chamber of Commerce certificates of origin",
+        "Preferential tariff & duty reduction filings"
+      ]
+    }
+  ],
+  "labTests": [
+    {
+      "parameter": "Dimensional Stability (Shrinkage)",
+      "method": "ISO 6330 / AATCC 135 (3 washes @ 40°C)",
+      "standard": "Warp < 2.0% / Weft < 1.5%"
+    },
+    {
+      "parameter": "Colorfastness to Washing & Water",
+      "method": "ISO 105-C06 / AATCC 61",
+      "standard": "Grade 4-5 color change / staining"
+    },
+    {
+      "parameter": "Rubbing Fastness (Crocking)",
+      "method": "ISO 105-X12 / AATCC 8",
+      "standard": "Dry: Grade 4-5 / Wet: Grade 3-4"
+    },
+    {
+      "parameter": "Tensile & Tear Resistance",
+      "method": "ISO 13934-1 / ASTM D5034",
+      "standard": "Warp > 750 N / Weft > 550 N"
+    },
+    {
+      "parameter": "Pilling & Surface Abrasion",
+      "method": "Martindale ISO 12945-2 (2,000 revs)",
+      "standard": "Grade 4 minimum resistance"
+    },
+    {
+      "parameter": "Chemical & Toxicity Screen",
+      "method": "OEKO-TEX Standard 100 Class I/II",
+      "standard": "Zero banned azo dyes, formaldehyde < 16 ppm"
+    }
+  ]
+}

@@ -9,52 +9,24 @@ import {
   ArrowRight,
   CheckCircle2,
   ShieldAlert,
+  HelpCircle,
+  type LucideIcon,
 } from "lucide-react";
+import { getFeaturesContent } from "@/lib/content";
 
-export const FEATURES = [
-  {
-    icon: Search,
-    pillar: "Procurement & Costing",
-    title: "Mill sourcing & open-book costing",
-    body: "We match your yarn construction, MOQ and price ceiling against mills we hold standing capacity with, and return an open cost comparison showing raw fiber %, CMT, dyeing and logistics — never an opaque markup.",
-    points: ["Open-book cost breakdown", "Greige yarn & fiber provenance", "Guaranteed loom capacity booking"],
-  },
-  {
-    icon: Ruler,
-    pillar: "Technical Sampling",
-    title: "Technical fit & sealed pre-production",
-    body: "Proto, fit, and pre-production samples run through our own on-site merchandisers. We review grading, balance shrinkage, and seal the pre-production sample before bulk yardage is touched.",
-    points: ["Tech-pack development & grading", "Pantone TCX spectrophotometer lab dips", "Sealed master PP sample"],
-  },
-  {
-    icon: ScanSearch,
-    pillar: "Quality Control",
-    title: "Salaried on-site inline & final QC",
-    body: "Our own inspectors sit on the factory line during cutting, sewing and pressing, working to AQL 2.5 on majors and 1.5 on criticals — not a third-party checklist received weeks after the fact.",
-    points: ["Mid-production inline checkpoints", "AQL 2.5 statistical final inspection", "100% metal detection & dated photo logs"],
-  },
-  {
-    icon: FileCheck2,
-    pillar: "Accreditation",
-    title: "Accredited testing & chain of custody",
-    body: "GOTS, OEKO-TEX Standard 100, BSCI, and Sedex SMETA 4-pillar certifications maintained with accredited SGS and Intertek lab test reports on file for every shipped production lot.",
-    points: ["GOTS & OEKO-TEX chain of custody", "BSCI & Sedex labor audits on file", "SGS / Intertek dimensional & colorfastness tests"],
-  },
-  {
-    icon: Ship,
-    pillar: "Freight & Customs",
-    title: "Freight, duty & customs clearance",
-    body: "FCL container contracts, LCL consolidation and chartered air freight quoted under clear Incoterms (FOB, CIF, or landed DDP), with destination duty classifications verified before the vessel sails.",
-    points: ["FCL, LCL consolidation & air freight", "Clear FOB, CIF, or landed DDP terms", "Dual-checked HS tariff classification"],
-  },
-  {
-    icon: FileStack,
-    pillar: "Trade Documentation",
-    title: "Complete international trade documentation",
-    body: "Commercial invoice, itemized packing list, clean on-board ocean bill of lading, chamber certificate of origin, and preferential trade duty forms (GSP Form A / EUR.1) completed before sailing.",
-    points: ["Full commercial trade document pack", "Chamber of Commerce certificates of origin", "Preferential tariff & duty reduction filings"],
-  },
-];
+const ICON_MAP: Record<string, LucideIcon> = {
+  Search,
+  Ruler,
+  ScanSearch,
+  FileCheck2,
+  Ship,
+  FileStack,
+};
+
+export const FEATURES = getFeaturesContent().features.map((f) => ({
+  ...f,
+  icon: ICON_MAP[f.iconName] || HelpCircle,
+}));
 
 export default function Features({
   variant = "full",
@@ -66,7 +38,12 @@ export default function Features({
   title?: string;
   lede?: string;
 }) {
-  const items = variant === "teaser" ? FEATURES.slice(0, 3) : FEATURES;
+  const content = getFeaturesContent();
+  const rawItems = variant === "teaser" ? content.features.slice(0, 3) : content.features;
+  const items = rawItems.map((f) => ({
+    ...f,
+    icon: ICON_MAP[f.iconName] || HelpCircle,
+  }));
 
   return (
     <section className="bg-canvas-subtle/60 py-20 sm:py-28 border-b border-line">
