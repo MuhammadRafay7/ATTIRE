@@ -11,22 +11,25 @@ interface LogoProps {
   showWordmark?: boolean;
   /** Insignia emblem variant */
   variant?: "weave" | "seal" | "monogram";
+  /** Custom logo image URL override (e.g. /images/custom-logo.png) */
+  logoImage?: string;
+  /** Brand Name override */
+  name?: string;
+  /** Tagline override */
+  tagline?: string;
   /** Additional CSS class names for the container */
   className?: string;
 }
 
-/**
- * Attire Services Institutional Brand Insignia
- *
- * Designed to project institutional trust, global scale, and operational clarity.
- * Balances industrial manufacturing authority with maritime merchant trade heritage.
- */
 export default function Logo({
   size = "md",
   iconSize,
   theme = "light",
   showWordmark = true,
   variant = "weave",
+  logoImage,
+  name = "Attire Services",
+  tagline = "Trading House · Est. 2009",
   className = "",
 }: LogoProps) {
   // Dimensions
@@ -35,17 +38,31 @@ export default function Logo({
 
   return (
     <div className={`group flex items-center gap-3 ${className}`}>
-      {/* Insignia Emblem Badge */}
-      <div
-        style={{ width: pxSize, height: pxSize }}
-        className={`relative flex shrink-0 items-center justify-center rounded-md border transition-all duration-200 ${
-          isDark
-            ? "border-white/15 bg-white/[0.06] text-brass-light shadow-sm group-hover:border-brass/40"
-            : "border-line bg-navy text-brass-light shadow-sm group-hover:bg-navy-soft"
-        }`}
-      >
-        <LogoInsignia variant={variant} />
-      </div>
+      {/* Insignia Emblem Badge or Custom Logo Image */}
+      {logoImage ? (
+        <div
+          style={{ width: pxSize, height: pxSize }}
+          className="relative flex shrink-0 items-center justify-center overflow-hidden rounded-md"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={logoImage}
+            alt={name}
+            className="h-full w-full object-contain"
+          />
+        </div>
+      ) : (
+        <div
+          style={{ width: pxSize, height: pxSize }}
+          className={`relative flex shrink-0 items-center justify-center rounded-md border transition-all duration-200 ${
+            isDark
+              ? "border-white/15 bg-white/[0.06] text-brass-light shadow-sm group-hover:border-brass/40"
+              : "border-line bg-navy text-brass-light shadow-sm group-hover:bg-navy-soft"
+          }`}
+        >
+          <LogoInsignia variant={variant} />
+        </div>
+      )}
 
       {/* Wordmark and Descriptor */}
       {showWordmark && (
@@ -59,14 +76,14 @@ export default function Logo({
                 : "text-lg sm:text-xl"
             } ${isDark ? "text-white" : "text-ink"}`}
           >
-            Attire Services
+            {name}
           </span>
           <span
             className={`font-mono uppercase tracking-[0.2em] mt-1 text-[9px] sm:text-[10px] leading-none ${
               isDark ? "text-brass-light/80" : "text-ink-muted"
             }`}
           >
-            Trading House &middot; Est. 2009
+            {tagline}
           </span>
         </div>
       )}

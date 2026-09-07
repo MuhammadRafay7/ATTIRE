@@ -211,6 +211,84 @@ async function commitToGitHub(section: SectionName, data: unknown): Promise<{ su
   }
 }
 
+const IMAGES_DIR = path.resolve(process.cwd(), "public/images");
+
+export async function saveUploadedImage(
+  filename: string,
+  base64Content: string
+): Promise<{ success: boolean; imagePath: string; message: string }> {
+  const cleanName = path.basename(filename).replace(/[^a-zA-Z0-9._-]/g, "_");
+  const ext = path.extname(cleanName).toLowerCase();
+  if (![".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif"].includes(ext)) {
+    throw new Error(`Invalid image extension '${ext}'. Allowed: .jpg, .jpeg, .png, .webp, .svg, .gif`);
+  }
+
+  const pureBase64 = base64Content.replace(/^data:image\/[a-zA-Z+]+;base64,/, "").trim();
+  const buffer = Buffer.from(pureBase64, "base64");
+
+  // 1. Write to local filesystem if writable
+  try {
+    if (!fs.existsSync(IMAGES_DIR)) fs.mkdirSync(IMAGES_DIR, { recursive: true });
+    fs.writeFileSync(path.join(IMAGES_DIR, cleanName), buffer);
+  } catch {
+    // Read-only serverless filesystem
+  }
+
+  // 2. Commit to GitHub repo if GITHUB_TOKEN is available
+  const gh = getGitHubConfig();
+  let ghStatus = "";
+  if (gh) {
+    try {
+      const gitPath = `public/images/${cleanName}`;
+      const getUrl = `https://api.github.com/repos/${gh.repo}/contents/${gitPath}?ref=${gh.branch}&t=${Date.now()}`;
+      let sha: string | undefined;
+      try {
+        const getRes = await fetch(getUrl, {
+          headers: {
+            Authorization: `Bearer ${gh.token}`,
+            Accept: "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "Attire-Services-CMS",
+          },
+          cache: "no-store",
+        });
+        if (getRes.ok) {
+          const fileInfo = await getRes.json();
+          sha = fileInfo.sha;
+        }
+      } catch {}
+
+      const putUrl = `https://api.github.com/repos/${gh.repo}/contents/${gitPath}`;
+      const putRes = await fetch(putUrl, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${gh.token}`,
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          "User-Agent": "Attire-Services-CMS",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: `Upload ${cleanName} via Attire MCP Assistant`,
+          content: pureBase64,
+          sha,
+          branch: gh.branch,
+        }),
+        cache: "no-store",
+      });
+      if (putRes.ok) {
+        ghStatus = " (Committed to GitHub repository)";
+      }
+    } catch {}
+  }
+
+  return {
+    success: true,
+    imagePath: `/images/${cleanName}`,
+    message: `Image '${cleanName}' successfully uploaded and saved at /images/${cleanName}.${ghStatus}`,
+  };
+}
+
 /**
  * Local filesystem read/write helpers
  */
@@ -218,6 +296,7 @@ function tryEnsureDirs() {
   try {
     if (!fs.existsSync(CONTENT_DIR)) fs.mkdirSync(CONTENT_DIR, { recursive: true });
     if (!fs.existsSync(BACKUP_DIR)) fs.mkdirSync(BACKUP_DIR, { recursive: true });
+    if (!fs.existsSync(IMAGES_DIR)) fs.mkdirSync(IMAGES_DIR, { recursive: true });
   } catch {
     // Read-only serverless filesystem
   }

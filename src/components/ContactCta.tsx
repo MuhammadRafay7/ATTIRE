@@ -10,6 +10,7 @@ export default function ContactCta({ content: initialContent }: { content?: Gene
   const [incoterm, setIncoterm] = useState("DDP Landed");
   const [volume, setVolume] = useState("2,000 – 5,000 pcs");
   const [status, setStatus] = useState<string | null>(null);
+  const [mailtoHref, setMailtoHref] = useState<string | null>(null);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -43,9 +44,10 @@ export default function ContactCta({ content: initialContent }: { content?: Gene
       subject
     )}&body=${encodeURIComponent(lines)}`;
 
+    setMailtoHref(href);
     window.location.href = href;
     setStatus(
-      "Opening your default email client with your structured RFQ ready. Please attach any PDF tech packs or spec sheets before sending."
+      "Opening your default email client with your pre-filled RFQ. If your email app does not open automatically, click the button below."
     );
   }
 
@@ -309,8 +311,17 @@ export default function ContactCta({ content: initialContent }: { content?: Gene
               </div>
 
               {status && (
-                <div className="mt-4 rounded-lg bg-emerald-50 border border-emerald-300 p-3 text-xs text-emerald-900 leading-relaxed font-mono">
-                  {status}
+                <div className="mt-4 rounded-lg bg-emerald-50 border border-emerald-300 p-4 text-xs text-emerald-900 leading-relaxed font-mono space-y-3">
+                  <p>{status}</p>
+                  {mailtoHref && (
+                    <a
+                      href={mailtoHref}
+                      className="inline-flex items-center gap-2 rounded-md bg-navy px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white shadow-sm hover:bg-navy-soft"
+                    >
+                      <Mail className="h-3.5 w-3.5 text-brass-light" />
+                      <span>Open in Email App Now</span>
+                    </a>
+                  )}
                 </div>
               )}
             </form>

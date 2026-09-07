@@ -5,13 +5,27 @@
     "description": "An independent apparel and textile trading house operating on its own balance sheet. We purchase goods directly from audited mills across South and Southeast Asia, inspect every lot on-site, and land documented, inspection-passed cargo to buyers worldwide.",
     "registeredCompany": "Attire Services Ltd.",
     "registrationNumber": "#06894120",
-    "registrationJurisdiction": "England & Wales"
+    "registrationJurisdiction": "England & Wales",
+    "logoImage": "",
+    "faviconUrl": "/favicon.ico"
   },
   "navLinks": [
-    { "href": "/capabilities", "label": "Capabilities" },
-    { "href": "/process", "label": "How It Works" },
-    { "href": "/materials", "label": "Material Library" },
-    { "href": "/company", "label": "The Company" }
+    {
+      "href": "/capabilities",
+      "label": "Capabilities"
+    },
+    {
+      "href": "/process",
+      "label": "How It Works"
+    },
+    {
+      "href": "/materials",
+      "label": "Material Library"
+    },
+    {
+      "href": "/company",
+      "label": "The Company"
+    }
   ],
   "contact": {
     "email": "trade@attireservices.com",
@@ -58,28 +72,64 @@
     {
       "heading": "Procurement & Quality",
       "links": [
-        { "label": "Capabilities & Infrastructure", "href": "/capabilities" },
-        { "label": "4-Stage Trade Protocol", "href": "/process" },
-        { "label": "Material Library & Swatches", "href": "/materials" },
-        { "label": "Commercial RFQ Configurator", "href": "/contact" }
+        {
+          "label": "Capabilities & Infrastructure",
+          "href": "/capabilities"
+        },
+        {
+          "label": "4-Stage Trade Protocol",
+          "href": "/process"
+        },
+        {
+          "label": "Material Library & Swatches",
+          "href": "/materials"
+        },
+        {
+          "label": "Commercial RFQ Configurator",
+          "href": "/contact"
+        }
       ]
     },
     {
       "heading": "The Trading House",
       "links": [
-        { "label": "Origin & Governance", "href": "/company" },
-        { "label": "Trading Standards Charter", "href": "/company#standards" },
-        { "label": "Audit & Compliance Accreditations", "href": "/capabilities#compliance" },
-        { "label": "Mill Floor Visit Program", "href": "/company#visits" }
+        {
+          "label": "Origin & Governance",
+          "href": "/company"
+        },
+        {
+          "label": "Trading Standards Charter",
+          "href": "/company#standards"
+        },
+        {
+          "label": "Audit & Compliance Accreditations",
+          "href": "/capabilities#compliance"
+        },
+        {
+          "label": "Mill Floor Visit Program",
+          "href": "/company#visits"
+        }
       ]
     },
     {
       "heading": "Direct Desk Inquiries",
       "links": [
-        { "label": "London: trade@attireservices.com", "href": "mailto:trade@attireservices.com" },
-        { "label": "Telephone: +44 20 7183 5501", "href": "tel:+442071835501" },
-        { "label": "Order Swatch Hangers", "href": "/contact?intent=swatches" },
-        { "label": "Submit Production Tech Pack", "href": "/contact" }
+        {
+          "label": "London: trade@attireservices.com",
+          "href": "mailto:trade@attireservices.com"
+        },
+        {
+          "label": "Telephone: +44 20 7183 5501",
+          "href": "tel:+442071835501"
+        },
+        {
+          "label": "Order Swatch Hangers",
+          "href": "/contact?intent=swatches"
+        },
+        {
+          "label": "Submit Production Tech Pack",
+          "href": "/contact"
+        }
       ]
     }
   ],
@@ -87,5 +137,15 @@
     "Incoterms® 2020 ICC Standards",
     "AQL 2.5 Normal Inspection",
     "GDPR & Commercial Confidentiality"
-  ]
+  ],
+  "theme": {
+    "accentColor": "brass",
+    "styleMode": "editorial",
+    "announcementBanner": {
+      "enabled": false,
+      "badge": "Notice",
+      "text": "Now booking Q4 2026 mill spinning allocations.",
+      "href": "/contact"
+    }
+  }
 }

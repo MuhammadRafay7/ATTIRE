@@ -8,6 +8,8 @@ export const GeneralSchema = z.object({
     registeredCompany: z.string().min(1),
     registrationNumber: z.string().min(1),
     registrationJurisdiction: z.string().min(1),
+    logoImage: z.string().optional().default(""),
+    faviconUrl: z.string().optional().default(""),
   }),
   navLinks: z.array(
     z.object({
@@ -45,6 +47,26 @@ export const GeneralSchema = z.object({
     })
   ),
   legalBadges: z.array(z.string()),
+  theme: z
+    .object({
+      accentColor: z.enum(["brass", "emerald", "cobalt", "amber", "crimson", "indigo"]).default("brass"),
+      styleMode: z.enum(["editorial", "modern", "minimal", "industrial"]).default("editorial"),
+      announcementBanner: z
+        .object({
+          enabled: z.boolean().default(false),
+          badge: z.string().default("Notice"),
+          text: z.string().default(""),
+          href: z.string().default("/contact"),
+        })
+        .default({ enabled: false, badge: "Notice", text: "", href: "/contact" }),
+      customCss: z.string().optional().default(""),
+    })
+    .default({
+      accentColor: "brass",
+      styleMode: "editorial",
+      announcementBanner: { enabled: false, badge: "Notice", text: "", href: "/contact" },
+      customCss: "",
+    }),
 });
 
 export const HeroSchema = z.object({

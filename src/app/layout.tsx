@@ -42,6 +42,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${chivo.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="icon" href={general.site?.faviconUrl || "/favicon.ico"} />
+        {general.theme?.customCss ? (
+          <style
+            id="attire-custom-css"
+            dangerouslySetInnerHTML={{ __html: general.theme.customCss }}
+          />
+        ) : null}
+      </head>
       <body className="min-h-full flex flex-col">
         <Nav content={general} />
         <main className="flex-1">{children}</main>

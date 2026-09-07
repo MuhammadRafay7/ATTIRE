@@ -14,11 +14,32 @@ export default function Nav({ content: initialContent }: { content?: GeneralCont
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-canvas/95 backdrop-blur-md transition-colors">
+      {/* Optional Dynamic Announcement Banner */}
+      {general.theme?.announcementBanner?.enabled && general.theme.announcementBanner.text && (
+        <div className="bg-navy px-4 py-2 text-center text-xs text-white flex items-center justify-center gap-2 border-b border-white/10 font-mono">
+          <span className="rounded bg-brass px-2 py-0.5 text-[10px] font-bold text-navy uppercase">
+            {general.theme.announcementBanner.badge || "Notice"}
+          </span>
+          <Link
+            href={general.theme.announcementBanner.href || "/contact"}
+            className="hover:text-brass-light transition-colors underline-offset-2 hover:underline"
+          >
+            {general.theme.announcementBanner.text}
+          </Link>
+        </div>
+      )}
+
       {/* Main navigation header */}
       <div className="container-x flex h-20 items-center justify-between">
         {/* Brand Insignia & Wordmark */}
-        <Link href="/" aria-label="Attire Services Home">
-          <Logo size="md" theme="light" />
+        <Link href="/" aria-label={`${general.site.name} Home`}>
+          <Logo
+            size="md"
+            theme="light"
+            name={general.site.name}
+            tagline={general.site.tagline}
+            logoImage={general.site.logoImage}
+          />
         </Link>
 
         {/* Desktop Links */}

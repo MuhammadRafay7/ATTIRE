@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { getSectionData, saveSectionData } from "../storage";
+import { getSectionData, saveSectionData, saveUploadedImage } from "../storage";
 import {
   SectionSchemas,
   type SectionName,
@@ -228,6 +228,79 @@ export function listTools(): McpToolDescriptor[] {
       annotations: { readOnlyHint: false },
     },
     {
+      name: "upload_image",
+      description: "Upload a binary image (in Base64 encoding) to the website. Saves to public/images/[filename] and commits to GitHub repo.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          filename: { type: "string", description: "Image filename (e.g. linen-fabric.jpg, factory-floor.png)" },
+          base64Data: { type: "string", description: "The base64 encoded binary image content (data URL prefix optional)" },
+        },
+        required: ["filename", "base64Data"],
+      },
+      annotations: { readOnlyHint: false },
+    },
+    {
+      name: "update_theme_style",
+      description: "Customize website style, accent color palette, or announcement banner dynamically.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          accentColor: {
+            type: "string",
+            enum: ["brass", "emerald", "cobalt", "amber", "crimson", "indigo"],
+            description: "Primary accent hue",
+          },
+          styleMode: {
+            type: "string",
+            enum: ["editorial", "modern", "minimal", "industrial"],
+            description: "Visual typography and layout density mood",
+          },
+          announcementBanner: {
+            type: "object",
+            properties: {
+              enabled: { type: "boolean" },
+              badge: { type: "string" },
+              text: { type: "string" },
+              href: { type: "string" },
+            },
+          },
+          customCss: {
+            type: "string",
+            description: "Custom CSS code to apply globally",
+          },
+        },
+      },
+      annotations: { readOnlyHint: false },
+    },
+    {
+      name: "update_branding",
+      description: "Update site brand name, tagline, description, custom logo image, and favicon URL.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          name: { type: "string", description: "Company / Site name" },
+          tagline: { type: "string", description: "Brand descriptor / tagline" },
+          description: { type: "string", description: "Institutional overview description" },
+          logoImage: { type: "string", description: "Custom logo image URL/path (e.g. /images/logo.png)" },
+          faviconUrl: { type: "string", description: "Favicon URL/path" },
+        },
+      },
+      annotations: { readOnlyHint: false },
+    },
+    {
+      name: "update_custom_css",
+      description: "Directly edit or inject custom CSS rules across the live website.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          css: { type: "string", description: "Global CSS rules to inject and render" },
+        },
+        required: ["css"],
+      },
+      annotations: { readOnlyHint: false },
+    },
+    {
       name: "update_section",
       description: "Update the full JSON content of a section with Zod validation.",
       inputSchema: {
@@ -304,7 +377,7 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
 
       case "list_sections": {
         const sections: Record<string, unknown> = {
-          general: "Branding, contact info, office desks, navigation, footers, accreditations",
+          general: "Branding, contact info, office desks, navigation, footers, theme styles, accreditations",
           hero: "Headline, lede copy, CTA buttons, guarantee badges, showcase stations & images",
           stats: "Numerical trading milestones and figures",
           features: "6 core sourcing capabilities and laboratory test matrix",
@@ -346,24 +419,101 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
         if (args.secondaryButtonText !== undefined) current.buttons.secondary.label = String(args.secondaryButtonText);
         if (args.secondaryButtonHref !== undefined) current.buttons.secondary.href = String(args.secondaryButtonHref);
 
-        await saveSectionData("hero", current);
-        return { text: "✅ Hero content successfully updated and published live." };
+        const res = await saveSectionData("hero", current);
+        return { text: `✅ ${res.message}` };
       }
 
       case "update_contact_info": {
         const current = await getSectionData<z.infer<typeof GeneralSchema>>("general");
-        if (args.email !== undefined) current.contact.email = String(args.email);
+        if (args.email !== undefined) {
+          const newEmail = String(args.email);
+          current.contact.email = newEmail;
+          for (const col of current.footerColumns) {
+            for (const link of col.links) {
+              if (link.href.startsWith("mailto:")) {
+                link.href = `mailto:${newEmail}`;
+                link.label = `London: ${newEmail}`;
+              }
+            }
+          }
+        }
         if (args.phone !== undefined) current.contact.phone = String(args.phone);
         if (args.hours !== undefined) current.contact.hours = String(args.hours);
         if (args.rfqSla !== undefined) current.contact.rfqSla = String(args.rfqSla);
 
-        await saveSectionData("general", current);
-        return { text: "✅ Contact information successfully updated across all pages, footers, and forms." };
+        const res = await saveSectionData("general", current);
+        return { text: `✅ ${res.message}` };
+      }
+
+      case "update_theme_style": {
+        const current = await getSectionData<z.infer<typeof GeneralSchema>>("general");
+        if (!current.theme) {
+          current.theme = {
+            accentColor: "brass",
+            styleMode: "editorial",
+            announcementBanner: { enabled: false, badge: "Notice", text: "", href: "/contact" },
+            customCss: "",
+          };
+        }
+        if (args.accentColor !== undefined) {
+          current.theme.accentColor = args.accentColor as any;
+        }
+        if (args.styleMode !== undefined) {
+          current.theme.styleMode = args.styleMode as any;
+        }
+        if (args.announcementBanner !== undefined && typeof args.announcementBanner === "object") {
+          current.theme.announcementBanner = {
+            ...current.theme.announcementBanner,
+            ...(args.announcementBanner as any),
+          };
+        }
+        if (args.customCss !== undefined) {
+          current.theme.customCss = String(args.customCss);
+        }
+
+        const res = await saveSectionData("general", current);
+        return { text: `✅ Website theme & styling successfully updated. ${res.message}` };
+      }
+
+      case "update_branding": {
+        const current = await getSectionData<z.infer<typeof GeneralSchema>>("general");
+        if (args.name !== undefined) current.site.name = String(args.name);
+        if (args.tagline !== undefined) current.site.tagline = String(args.tagline);
+        if (args.description !== undefined) current.site.description = String(args.description);
+        if (args.logoImage !== undefined) current.site.logoImage = String(args.logoImage);
+        if (args.faviconUrl !== undefined) current.site.faviconUrl = String(args.faviconUrl);
+
+        const res = await saveSectionData("general", current);
+        return { text: `✅ Website branding, logo, and identity successfully updated. ${res.message}` };
+      }
+
+      case "update_custom_css": {
+        const current = await getSectionData<z.infer<typeof GeneralSchema>>("general");
+        if (!current.theme) {
+          current.theme = {
+            accentColor: "brass",
+            styleMode: "editorial",
+            announcementBanner: { enabled: false, badge: "Notice", text: "", href: "/contact" },
+            customCss: "",
+          };
+        }
+        current.theme.customCss = String(args.css || "");
+        const res = await saveSectionData("general", current);
+        return { text: `✅ Custom CSS successfully applied across the website. ${res.message}` };
+      }
+
+      case "upload_image": {
+        const filename = String(args.filename);
+        const base64Data = String(args.base64Data);
+        const res = await saveUploadedImage(filename, base64Data);
+        return {
+          text: `✅ ${res.message}\nImage URL to use in content: ${res.imagePath}`,
+        };
       }
 
       case "update_stats": {
-        await saveSectionData("stats", args.stats);
-        return { text: "✅ Site statistics successfully updated and published live." };
+        const res = await saveSectionData("stats", args.stats);
+        return { text: `✅ ${res.message}` };
       }
 
       case "add_or_update_material": {
@@ -373,8 +523,8 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
         if (idx >= 0) current.materials[idx] = material;
         else current.materials.push(material);
 
-        await saveSectionData("materials", current);
-        return { text: `✅ Material '${material.name}' (${material.id}) successfully saved in catalog and published live.` };
+        const res = await saveSectionData("materials", current);
+        return { text: `✅ Material '${material.name}' (${material.id}) saved in catalog. ${res.message}` };
       }
 
       case "delete_material": {
@@ -385,8 +535,8 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
           return { text: `⚠️ Material with id '${id}' not found.` };
         }
         current.materials = filtered;
-        await saveSectionData("materials", current);
-        return { text: `✅ Material '${id}' successfully removed from catalog.` };
+        const res = await saveSectionData("materials", current);
+        return { text: `✅ Material '${id}' removed from catalog. ${res.message}` };
       }
 
       case "add_or_update_testimonial": {
@@ -396,8 +546,8 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
         if (idx >= 0) current.testimonials[idx] = testimonial;
         else current.testimonials.push(testimonial);
 
-        await saveSectionData("testimonials", current);
-        return { text: `✅ Testimonial for '${testimonial.buyer}' successfully saved and published live.` };
+        const res = await saveSectionData("testimonials", current);
+        return { text: `✅ Testimonial for '${testimonial.buyer}' saved. ${res.message}` };
       }
 
       case "list_images": {
@@ -448,8 +598,8 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
           return { text: `❌ Backup '${backupFilename}' not found.`, isError: true };
         }
         const data = JSON.parse(fs.readFileSync(backupPath, "utf-8"));
-        await saveSectionData(section, data);
-        return { text: `✅ Section '${section}' restored from '${backupFilename}'.` };
+        const res = await saveSectionData(section, data);
+        return { text: `✅ Section '${section}' restored from '${backupFilename}'. ${res.message}` };
       }
 
       case "validate_all_content": {

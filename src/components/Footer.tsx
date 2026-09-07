@@ -36,8 +36,14 @@ export default function Footer({ content: initialContent }: { content?: GeneralC
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
           {/* Brand Identity & Mission */}
           <div className="lg:col-span-4">
-            <Link href="/" aria-label="Attire Services Home">
-              <Logo size="md" theme="dark" />
+            <Link href="/" aria-label={`${general.site.name} Home`}>
+              <Logo
+                size="md"
+                theme="dark"
+                name={general.site.name}
+                tagline={general.site.tagline}
+                logoImage={general.site.logoImage}
+              />
             </Link>
 
             <p className="mt-4 text-xs leading-relaxed text-white/60 max-w-sm">
