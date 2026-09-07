@@ -1,20 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
-import generalData from "@/content/general.json";
-import heroData from "@/content/hero.json";
-import statsData from "@/content/stats.json";
-import featuresData from "@/content/features.json";
-import processData from "@/content/process.json";
-import materialsData from "@/content/materials.json";
-import companyData from "@/content/company.json";
-import testimonialsData from "@/content/testimonials.json";
-
+import { getSectionData, saveSectionData } from "../storage";
 import {
   SectionSchemas,
   type SectionName,
   GeneralSchema,
   HeroSchema,
-  StatsSchema,
   MaterialsSchema,
   TestimonialsSchema,
   MaterialItemSchema,
@@ -22,85 +13,8 @@ import {
 } from "../schemas";
 import type { z } from "zod";
 
-// In-memory store initialized with bundled JSON data (guaranteed to work in Vercel/serverless)
-const memoryStore: Record<SectionName, any> = {
-  general: generalData,
-  hero: heroData,
-  stats: statsData,
-  features: featuresData,
-  process: processData,
-  materials: materialsData,
-  company: companyData,
-  testimonials: testimonialsData,
-};
-
-const CONTENT_DIR = path.resolve(process.cwd(), "src/content");
 const BACKUP_DIR = path.resolve(process.cwd(), ".content-backups");
 const IMAGES_DIR = path.resolve(process.cwd(), "public/images");
-
-function tryEnsureDirs() {
-  try {
-    if (!fs.existsSync(CONTENT_DIR)) fs.mkdirSync(CONTENT_DIR, { recursive: true });
-    if (!fs.existsSync(BACKUP_DIR)) fs.mkdirSync(BACKUP_DIR, { recursive: true });
-  } catch {
-    // Read-only filesystem in serverless environments (Vercel)
-  }
-}
-
-function readSectionFile<T = unknown>(section: SectionName): T {
-  try {
-    const filePath = path.join(CONTENT_DIR, `${section}.json`);
-    if (fs.existsSync(filePath)) {
-      const raw = fs.readFileSync(filePath, "utf-8");
-      const parsed = JSON.parse(raw);
-      memoryStore[section] = parsed;
-      return parsed as T;
-    }
-  } catch {
-    // Fall back to memory store on serverless/read-only environments
-  }
-  return memoryStore[section] as T;
-}
-
-function backupSection(section: SectionName) {
-  try {
-    tryEnsureDirs();
-    const filePath = path.join(CONTENT_DIR, `${section}.json`);
-    if (fs.existsSync(filePath) && fs.existsSync(BACKUP_DIR)) {
-      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-      const backupFile = path.join(BACKUP_DIR, `${section}-${timestamp}.json`);
-      fs.copyFileSync(filePath, backupFile);
-    }
-  } catch {
-    // Ignored in read-only environments
-  }
-}
-
-function writeSectionFile(section: SectionName, data: unknown) {
-  const schema = SectionSchemas[section];
-  if (!schema) throw new Error(`Unknown section: ${section}`);
-
-  const parsed = schema.safeParse(data);
-  if (!parsed.success) {
-    const issues = parsed.error.issues.map((i) => `[${i.path.join(".")}]: ${i.message}`).join(", ");
-    throw new Error(`Validation failed for section '${section}': ${issues}`);
-  }
-
-  // Update in-memory state immediately
-  memoryStore[section] = parsed.data;
-
-  // Attempt to persist to disk if filesystem is writable
-  try {
-    tryEnsureDirs();
-    backupSection(section);
-    const filePath = path.join(CONTENT_DIR, `${section}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(parsed.data, null, 2), "utf-8");
-  } catch {
-    // Memory store is updated even in read-only serverless runtimes
-  }
-
-  return { success: true, message: `Section '${section}' successfully updated and verified.` };
-}
 
 export interface McpToolDescriptor {
   name: string;
@@ -356,35 +270,35 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
     switch (name) {
       // Direct Read Tools
       case "get_hero_content": {
-        const data = readSectionFile("hero");
+        const data = await getSectionData("hero");
         return { text: JSON.stringify(data, null, 2) };
       }
       case "get_contact_info": {
-        const data = readSectionFile("general");
+        const data = await getSectionData("general");
         return { text: JSON.stringify(data, null, 2) };
       }
       case "get_stats": {
-        const data = readSectionFile("stats");
+        const data = await getSectionData("stats");
         return { text: JSON.stringify(data, null, 2) };
       }
       case "get_materials": {
-        const data = readSectionFile("materials");
+        const data = await getSectionData("materials");
         return { text: JSON.stringify(data, null, 2) };
       }
       case "get_testimonials": {
-        const data = readSectionFile("testimonials");
+        const data = await getSectionData("testimonials");
         return { text: JSON.stringify(data, null, 2) };
       }
       case "get_features": {
-        const data = readSectionFile("features");
+        const data = await getSectionData("features");
         return { text: JSON.stringify(data, null, 2) };
       }
       case "get_process": {
-        const data = readSectionFile("process");
+        const data = await getSectionData("process");
         return { text: JSON.stringify(data, null, 2) };
       }
       case "get_company": {
-        const data = readSectionFile("company");
+        const data = await getSectionData("company");
         return { text: JSON.stringify(data, null, 2) };
       }
 
@@ -407,21 +321,23 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
         if (section === "all") {
           const allSections = Object.keys(SectionSchemas) as SectionName[];
           const result: Record<string, unknown> = {};
-          for (const s of allSections) result[s] = readSectionFile(s);
+          for (const s of allSections) {
+            result[s] = await getSectionData(s);
+          }
           return { text: JSON.stringify(result, null, 2) };
         }
-        const data = readSectionFile(section as SectionName);
+        const data = await getSectionData(section as SectionName);
         return { text: JSON.stringify(data, null, 2) };
       }
 
       case "update_section": {
         const section = args.section as SectionName;
-        const res = writeSectionFile(section, args.content);
+        const res = await saveSectionData(section, args.content);
         return { text: `✅ ${res.message}` };
       }
 
       case "update_hero": {
-        const current = readSectionFile<z.infer<typeof HeroSchema>>("hero");
+        const current = await getSectionData<z.infer<typeof HeroSchema>>("hero");
         if (args.headlineLead !== undefined) current.title.lead = String(args.headlineLead);
         if (args.headlineHighlight !== undefined) current.title.highlight = String(args.headlineHighlight);
         if (args.lede !== undefined) current.lede = String(args.lede);
@@ -430,58 +346,58 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
         if (args.secondaryButtonText !== undefined) current.buttons.secondary.label = String(args.secondaryButtonText);
         if (args.secondaryButtonHref !== undefined) current.buttons.secondary.href = String(args.secondaryButtonHref);
 
-        writeSectionFile("hero", current);
-        return { text: "✅ Hero content successfully updated." };
+        await saveSectionData("hero", current);
+        return { text: "✅ Hero content successfully updated and published live." };
       }
 
       case "update_contact_info": {
-        const current = readSectionFile<z.infer<typeof GeneralSchema>>("general");
+        const current = await getSectionData<z.infer<typeof GeneralSchema>>("general");
         if (args.email !== undefined) current.contact.email = String(args.email);
         if (args.phone !== undefined) current.contact.phone = String(args.phone);
         if (args.hours !== undefined) current.contact.hours = String(args.hours);
         if (args.rfqSla !== undefined) current.contact.rfqSla = String(args.rfqSla);
 
-        writeSectionFile("general", current);
+        await saveSectionData("general", current);
         return { text: "✅ Contact information successfully updated across all pages, footers, and forms." };
       }
 
       case "update_stats": {
-        writeSectionFile("stats", args.stats);
-        return { text: "✅ Site statistics successfully updated." };
+        await saveSectionData("stats", args.stats);
+        return { text: "✅ Site statistics successfully updated and published live." };
       }
 
       case "add_or_update_material": {
         const material = MaterialItemSchema.parse(args);
-        const current = readSectionFile<z.infer<typeof MaterialsSchema>>("materials");
+        const current = await getSectionData<z.infer<typeof MaterialsSchema>>("materials");
         const idx = current.materials.findIndex((m) => m.id === material.id);
         if (idx >= 0) current.materials[idx] = material;
         else current.materials.push(material);
 
-        writeSectionFile("materials", current);
-        return { text: `✅ Material '${material.name}' (${material.id}) successfully saved in catalog.` };
+        await saveSectionData("materials", current);
+        return { text: `✅ Material '${material.name}' (${material.id}) successfully saved in catalog and published live.` };
       }
 
       case "delete_material": {
         const id = String(args.id);
-        const current = readSectionFile<z.infer<typeof MaterialsSchema>>("materials");
+        const current = await getSectionData<z.infer<typeof MaterialsSchema>>("materials");
         const filtered = current.materials.filter((m) => m.id !== id);
         if (filtered.length === current.materials.length) {
           return { text: `⚠️ Material with id '${id}' not found.` };
         }
         current.materials = filtered;
-        writeSectionFile("materials", current);
+        await saveSectionData("materials", current);
         return { text: `✅ Material '${id}' successfully removed from catalog.` };
       }
 
       case "add_or_update_testimonial": {
         const testimonial = TestimonialItemSchema.parse(args);
-        const current = readSectionFile<z.infer<typeof TestimonialsSchema>>("testimonials");
+        const current = await getSectionData<z.infer<typeof TestimonialsSchema>>("testimonials");
         const idx = current.testimonials.findIndex((t) => t.id === testimonial.id);
         if (idx >= 0) current.testimonials[idx] = testimonial;
         else current.testimonials.push(testimonial);
 
-        writeSectionFile("testimonials", current);
-        return { text: `✅ Testimonial for '${testimonial.buyer}' successfully saved.` };
+        await saveSectionData("testimonials", current);
+        return { text: `✅ Testimonial for '${testimonial.buyer}' successfully saved and published live.` };
       }
 
       case "list_images": {
@@ -532,7 +448,7 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
           return { text: `❌ Backup '${backupFilename}' not found.`, isError: true };
         }
         const data = JSON.parse(fs.readFileSync(backupPath, "utf-8"));
-        writeSectionFile(section, data);
+        await saveSectionData(section, data);
         return { text: `✅ Section '${section}' restored from '${backupFilename}'.` };
       }
 
@@ -542,7 +458,7 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
         let allValid = true;
         for (const s of sections) {
           try {
-            const data = readSectionFile(s);
+            const data = await getSectionData(s);
             SectionSchemas[s].parse(data);
             report[s] = { valid: true };
           } catch (e) {

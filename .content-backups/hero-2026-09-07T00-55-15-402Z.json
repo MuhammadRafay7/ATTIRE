@@ -1,9 +1,9 @@
 {
   "title": {
-    "lead": "Direct Principal Apparel Trading (Verified Live)",
+    "lead": "Direct Principal Apparel Trading, Handled on Our",
     "highlight": "Own Balance Sheet"
   },
-  "lede": "Customized live update via MCP serverless storage engine without rebuilding the site.",
+  "lede": "We purchase bulk greige cloth and finished garments outright from 63 audited spinning and weaving mills across South and Southeast Asia. Our salaried QC inspectors control the factory floor, delivering customs-cleared cargo directly to your dock — on one contract, in one currency.",
   "buttons": {
     "primary": {
       "label": "Initiate Landed Costing",
@@ -15,16 +15,9 @@
     }
   },
   "guaranteeBadges": [
-    {
-      "text": "48h Open FOB Cost Breakdown",
-      "dotColor": "emerald"
-    },
-    {
-      "text": "Zero Broker Markups"
-    },
-    {
-      "text": "Principal Cargo Liability"
-    }
+    { "text": "48h Open FOB Cost Breakdown", "dotColor": "emerald" },
+    { "text": "Zero Broker Markups" },
+    { "text": "Principal Cargo Liability" }
   ],
   "stations": [
     {
@@ -65,17 +58,8 @@
     }
   ],
   "bottomMetrics": [
-    {
-      "label": "Running Mill Capacity",
-      "value": "480,000 m / mo"
-    },
-    {
-      "label": "Marine Cargo Volume",
-      "value": "2,400+ TEU / year"
-    },
-    {
-      "label": "Quality Defect Ceiling",
-      "value": "AQL 2.5 Major / 1.5 Crit"
-    }
+    { "label": "Running Mill Capacity", "value": "480,000 m / mo" },
+    { "label": "Marine Cargo Volume", "value": "2,400+ TEU / year" },
+    { "label": "Quality Defect Ceiling", "value": "AQL 2.5 Major / 1.5 Crit" }
   ]
 }

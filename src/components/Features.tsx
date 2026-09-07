@@ -12,7 +12,7 @@ import {
   HelpCircle,
   type LucideIcon,
 } from "lucide-react";
-import { getFeaturesContent } from "@/lib/content";
+import { getFeaturesContent, type FeaturesContent } from "@/lib/content";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Search,
@@ -23,22 +23,19 @@ const ICON_MAP: Record<string, LucideIcon> = {
   FileStack,
 };
 
-export const FEATURES = getFeaturesContent().features.map((f) => ({
-  ...f,
-  icon: ICON_MAP[f.iconName] || HelpCircle,
-}));
-
 export default function Features({
   variant = "full",
   title = "Everything between a tech pack and a landed container",
   lede = "Most sourcing agents introduce a factory and step back once the order leaves port. We buy the goods outright on our own balance sheet, so the same team stays accountable from first yarn spin to loading bay clearance.",
+  content: initialContent,
 }: {
   variant?: "full" | "teaser";
   eyebrow?: string;
   title?: string;
   lede?: string;
+  content?: FeaturesContent;
 }) {
-  const content = getFeaturesContent();
+  const content = initialContent ?? getFeaturesContent();
   const rawItems = variant === "teaser" ? content.features.slice(0, 3) : content.features;
   const items = rawItems.map((f) => ({
     ...f,

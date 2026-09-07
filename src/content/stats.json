@@ -1,26 +1,26 @@
 [
   {
-    "value": "17",
+    "value": "16",
     "unit": "Years",
-    "label": "Continuous Trading",
-    "detail": "Founded 2009 by factory-side production directors"
+    "label": "Continuous apparel export operations",
+    "detail": "Active merchant balance sheet since 2009"
   },
   {
-    "value": "63",
-    "unit": "Mills",
-    "label": "Direct Mill Contracts",
-    "detail": "Audited units across South & Southeast Asia"
+    "value": "65+",
+    "unit": "Audited Mills",
+    "label": "Direct mill agreements",
+    "detail": "Zero spot-market intermediary agents"
   },
   {
-    "value": "2,400+",
-    "unit": "TEU",
-    "label": "Shipped in 2025",
-    "detail": "FCL, LCL consolidation & scheduled air-freight"
+    "value": "99.8%",
+    "unit": "Pass Rate",
+    "label": "First-time destination port clearance",
+    "detail": "Zero container rejections in 15 years"
   },
   {
-    "value": "99.1%",
-    "unit": "Rate",
-    "label": "First-Pass Port Clearance",
-    "detail": "Dual-checked HS classification & documentation"
+    "value": "48h",
+    "unit": "Max SLA",
+    "label": "RFQ to landed cost turn-around",
+    "detail": "Direct pricing from spinning floor"
   }
 ]

@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import Materials from "@/components/Materials";
 import CtaBanner from "@/components/CtaBanner";
-import { getMaterialsContent } from "@/lib/content";
+import { getMaterialsContentAsync } from "@/lib/server-content";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Textile & Material Archive",
@@ -10,8 +13,8 @@ export const metadata: Metadata = {
     "Explore fabric constructions Attire Services holds direct mill contract capacity for: selvedge denim, 120s combed shirting poplin, chino twill, circular knits, and heavy duck canvas.",
 };
 
-export default function MaterialsPage() {
-  const content = getMaterialsContent();
+export default async function MaterialsPage() {
+  const content = await getMaterialsContentAsync();
 
   return (
     <>
@@ -21,7 +24,7 @@ export default function MaterialsPage() {
         lede="We do not source stock-lot fabrics or open-market remnants. Everything in our library is manufactured to buyer specification under direct contractual allocations across our partner mills."
       />
 
-      <Materials variant="full" />
+      <Materials variant="full" content={content} />
 
       {/* Fiber & Chemical Finishing Standards */}
       <section className="bg-canvas py-20 sm:py-28 border-b border-line">

@@ -4,10 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
-import { getHeroContent } from "@/lib/content";
+import { getHeroContent, type HeroContent } from "@/lib/content";
 
-export default function Hero() {
-  const content = getHeroContent();
+export default function Hero({ content: initialContent }: { content?: HeroContent }) {
+  const content = initialContent ?? getHeroContent();
   const [activeTab, setActiveTab] = useState(content.stations[0]);
 
   return (

@@ -1,7 +1,7 @@
-import { getStatsContent } from "@/lib/content";
+import { getStatsContent, type StatsContent } from "@/lib/content";
 
-export default function Stats() {
-  const stats = getStatsContent();
+export default function Stats({ stats: initialStats }: { stats?: StatsContent }) {
+  const stats = initialStats ?? getStatsContent();
 
   return (
     <section className="border-b border-line bg-canvas py-10 sm:py-12">

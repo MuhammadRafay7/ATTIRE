@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Chivo, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import { getGeneralContentAsync } from "@/lib/server-content";
 import "./globals.css";
 
 const chivo = Chivo({
@@ -33,16 +34,18 @@ export const metadata: Metadata = {
     "Attire Services sources apparel and textiles from audited mills across South and Southeast Asia and delivers landed, documented, inspection-passed goods to buyers worldwide.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const general = await getGeneralContentAsync();
+
   return (
     <html
       lang="en"
       className={`${chivo.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Nav />
+        <Nav content={general} />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <Footer content={general} />
       </body>
     </html>
   );

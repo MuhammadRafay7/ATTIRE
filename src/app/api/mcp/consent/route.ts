@@ -1,29 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
-import { MCP_CORS_HEADERS } from "@/lib/mcp/oauth";
+import { MCP_CORS_HEADERS, authCodesMap } from "@/lib/mcp/oauth";
 
 const EXPECTED_KEY = process.env.ATTIRE_MCP_KEY || "rafay";
-
-// Shared in-memory auth codes store
-export interface AuthCodeEntry {
-  code: string;
-  clientId: string;
-  redirectUri: string;
-  codeChallenge?: string;
-  codeChallengeMethod?: string;
-  expiresAt: number;
-}
-
-declare global {
-  // eslint-disable-next-line no-var
-  var __mcpAuthCodes: Map<string, AuthCodeEntry> | undefined;
-}
-
-if (!global.__mcpAuthCodes) {
-  global.__mcpAuthCodes = new Map<string, AuthCodeEntry>();
-}
-
-export const authCodesMap = global.__mcpAuthCodes;
 
 export const dynamic = "force-dynamic";
 

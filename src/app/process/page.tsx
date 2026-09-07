@@ -4,7 +4,10 @@ import { ShieldAlert, Clock, FileWarning, Microscope, Scale, HelpCircle, type Lu
 import PageHeader from "@/components/PageHeader";
 import Process from "@/components/Process";
 import CtaBanner from "@/components/CtaBanner";
-import { getProcessContent } from "@/lib/content";
+import { getProcessContentAsync } from "@/lib/server-content";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const RISK_ICON_MAP: Record<string, LucideIcon> = {
   ShieldAlert,
@@ -18,8 +21,8 @@ export const metadata: Metadata = {
     "How apparel orders move through Attire Services from tech pack to landed delivery, and the three systemic supply chain risks we actively engineer out.",
 };
 
-export default function ProcessPage() {
-  const content = getProcessContent();
+export default async function ProcessPage() {
+  const content = await getProcessContentAsync();
   const risks = content.risks.map((r) => ({
     ...r,
     icon: RISK_ICON_MAP[r.iconName] || HelpCircle,
@@ -33,7 +36,7 @@ export default function ProcessPage() {
         lede="Most supply chain friction stems from vague status emails. We replace verbal assurances with auditable milestone documents &mdash; open-book cost sheets, spectrophotometer lab dips, statistical AQL certificates, and customs-cleared bills of lading."
       />
 
-      <Process />
+      <Process content={content} />
 
       {/* Laboratory Inspection Documentary Break */}
       <section className="bg-canvas-subtle/50 py-20 sm:py-28 border-b border-line">

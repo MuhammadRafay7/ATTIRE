@@ -1,8 +1,8 @@
 import { Quote, CheckCircle2 } from "lucide-react";
-import { getTestimonialsContent } from "@/lib/content";
+import { getTestimonialsContent, type TestimonialsContent } from "@/lib/content";
 
-export default function Testimonials() {
-  const content = getTestimonialsContent();
+export default function Testimonials({ content: initialContent }: { content?: TestimonialsContent }) {
+  const content = initialContent ?? getTestimonialsContent();
 
   return (
     <section className="bg-canvas py-20 sm:py-28 border-b border-line">

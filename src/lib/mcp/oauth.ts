@@ -1,6 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
-import { authCodesMap } from "@/app/api/mcp/consent/route";
+
+export interface AuthCodeEntry {
+  code: string;
+  clientId: string;
+  redirectUri: string;
+  codeChallenge?: string;
+  codeChallengeMethod?: string;
+  expiresAt: number;
+}
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __mcpAuthCodes: Map<string, AuthCodeEntry> | undefined;
+}
+
+if (!global.__mcpAuthCodes) {
+  global.__mcpAuthCodes = new Map<string, AuthCodeEntry>();
+}
+
+export const authCodesMap = global.__mcpAuthCodes;
 
 const EXPECTED_KEY = process.env.ATTIRE_MCP_KEY || "rafay";
 

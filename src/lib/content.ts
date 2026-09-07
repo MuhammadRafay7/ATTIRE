@@ -41,6 +41,7 @@ export type RiskItem = z.infer<typeof RiskItemSchema>;
 export type TestimonialItem = z.infer<typeof TestimonialItemSchema>;
 export type StatItem = z.infer<typeof StatItemSchema>;
 
+// Pure, universal synchronous content loaders (safe for both Client & Server components)
 export function getGeneralContent(): GeneralContent {
   return generalData as GeneralContent;
 }
@@ -72,14 +73,3 @@ export function getCompanyContent(): CompanyContent {
 export function getTestimonialsContent(): TestimonialsContent {
   return testimonialsData as TestimonialsContent;
 }
-
-export const siteContent = {
-  general: generalData as GeneralContent,
-  hero: heroData as HeroContent,
-  stats: statsData as StatsContent,
-  features: featuresData as FeaturesContent,
-  process: processData as ProcessContent,
-  materials: materialsData as MaterialsContent,
-  company: companyData as CompanyContent,
-  testimonials: testimonialsData as TestimonialsContent,
-};

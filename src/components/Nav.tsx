@@ -5,10 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import Logo from "./Logo";
-import { getGeneralContent } from "@/lib/content";
+import { getGeneralContent, type GeneralContent } from "@/lib/content";
 
-export default function Nav() {
-  const general = getGeneralContent();
+export default function Nav({ content: initialContent }: { content?: GeneralContent }) {
+  const general = initialContent ?? getGeneralContent();
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 

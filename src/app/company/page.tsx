@@ -4,7 +4,10 @@ import { X, ShieldCheck, MapPin, Calendar } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import Stats from "@/components/Stats";
 import CtaBanner from "@/components/CtaBanner";
-import { getCompanyContent, getGeneralContent } from "@/lib/content";
+import { getCompanyContentAsync, getGeneralContentAsync, getStatsContentAsync } from "@/lib/server-content";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "The Company & Trading Charter",
@@ -12,9 +15,12 @@ export const metadata: Metadata = {
     "Attire Services is an independent apparel trading house founded in 2009. We purchase from audited mills on our own balance sheet and deliver landed cargo to buyers worldwide.",
 };
 
-export default function CompanyPage() {
-  const company = getCompanyContent();
-  const general = getGeneralContent();
+export default async function CompanyPage() {
+  const [company, general, stats] = await Promise.all([
+    getCompanyContentAsync(),
+    getGeneralContentAsync(),
+    getStatsContentAsync(),
+  ]);
 
   return (
     <>
@@ -61,7 +67,7 @@ export default function CompanyPage() {
         </div>
       </section>
 
-      <Stats />
+      <Stats stats={stats} />
 
       {/* Global Trading Desks */}
       <section className="bg-canvas-subtle/60 py-20 sm:py-28 border-b border-line">

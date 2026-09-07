@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import ContactCta from "@/components/ContactCta";
+import { getGeneralContentAsync } from "@/lib/server-content";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -8,7 +12,9 @@ export const metadata: Metadata = {
     "Send Attire Services a tech pack or an enquiry. We respond within two working days with mill options, indicative landed cost and a ship window.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const content = await getGeneralContentAsync();
+
   return (
     <>
       <PageHeader
@@ -16,7 +22,7 @@ export default function ContactPage() {
         title="Tell us what you need made"
         lede="A rough description is enough to start. If you have a tech pack, attach it to the email this form opens — we read them the same day."
       />
-      <ContactCta />
+      <ContactCta content={content} />
     </>
   );
 }

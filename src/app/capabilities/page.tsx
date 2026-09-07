@@ -4,7 +4,10 @@ import PageHeader from "@/components/PageHeader";
 import Features from "@/components/Features";
 import CtaBanner from "@/components/CtaBanner";
 import { CheckCircle2, ShieldCheck } from "lucide-react";
-import { getFeaturesContent } from "@/lib/content";
+import { getFeaturesContentAsync } from "@/lib/server-content";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Sourcing & Export Capabilities",
@@ -12,8 +15,8 @@ export const metadata: Metadata = {
     "Mill procurement, sampling, on-site quality control, laboratory compliance testing, customs, and landed container logistics across South and Southeast Asia.",
 };
 
-export default function CapabilitiesPage() {
-  const content = getFeaturesContent();
+export default async function CapabilitiesPage() {
+  const content = await getFeaturesContentAsync();
 
   return (
     <>
@@ -28,6 +31,7 @@ export default function CapabilitiesPage() {
         eyebrow="Six Core Functions"
         title="Everything between a tech pack and a landed container"
         lede="Each of these can be pieced together from separate brokers, forwarders and third-party auditors. We execute them as one coordinated, accountable service."
+        content={content}
       />
 
       {/* Production floor documentary break */}

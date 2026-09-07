@@ -2,10 +2,10 @@
 
 import { useState, FormEvent } from "react";
 import { ArrowRight, Mail, Phone } from "lucide-react";
-import { getGeneralContent } from "@/lib/content";
+import { getGeneralContent, type GeneralContent } from "@/lib/content";
 
-export default function ContactCta() {
-  const general = getGeneralContent();
+export default function ContactCta({ content: initialContent }: { content?: GeneralContent }) {
+  const general = initialContent ?? getGeneralContent();
   const [commodity, setCommodity] = useState("Wovens & Shirting");
   const [incoterm, setIncoterm] = useState("DDP Landed");
   const [volume, setVolume] = useState("2,000 – 5,000 pcs");

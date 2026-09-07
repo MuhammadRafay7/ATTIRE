@@ -4,20 +4,22 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Eye, SlidersHorizontal } from "lucide-react";
-import { getMaterialsContent, type MaterialItem } from "@/lib/content";
+import { getMaterialsContent, type MaterialsContent, type MaterialItem } from "@/lib/content";
 
 export { type MaterialItem };
-export const MATERIALS = getMaterialsContent().materials;
 
 export default function Materials({
   variant = "full",
+  content: initialContent,
 }: {
   variant?: "full" | "teaser";
+  content?: MaterialsContent;
 }) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [activeModalMaterial, setActiveModalMaterial] = useState<MaterialItem | null>(null);
 
-  const materials = getMaterialsContent().materials;
+  const content = initialContent ?? getMaterialsContent();
+  const materials = content.materials;
 
   const filteredItems = materials.filter((m) => {
     if (selectedCategory === "all") return true;

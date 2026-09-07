@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Logo from "./Logo";
-import { getGeneralContent } from "@/lib/content";
+import { getGeneralContent, type GeneralContent } from "@/lib/content";
 
-export default function Footer() {
-  const general = getGeneralContent();
+export default function Footer({ content: initialContent }: { content?: GeneralContent }) {
+  const general = initialContent ?? getGeneralContent();
 
   return (
     <footer className="border-t border-white/10 bg-navy-deep text-white/70">

@@ -10,7 +10,7 @@ import {
   ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
-import { getProcessContent } from "@/lib/content";
+import { getProcessContent, type ProcessContent } from "@/lib/content";
 
 const DOC_ICON_MAP: Record<string, LucideIcon> = {
   FileSpreadsheet,
@@ -19,8 +19,8 @@ const DOC_ICON_MAP: Record<string, LucideIcon> = {
   Stamp,
 };
 
-export default function Process() {
-  const content = getProcessContent();
+export default function Process({ content: initialContent }: { content?: ProcessContent }) {
+  const content = initialContent ?? getProcessContent();
   const stages = content.stages.map((s) => ({
     ...s,
     docIcon: DOC_ICON_MAP[s.docIconName] || FileSpreadsheet,
