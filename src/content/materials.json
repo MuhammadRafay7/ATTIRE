@@ -119,6 +119,21 @@
       "tariff": "HS 5208.43.00",
       "image": "/images/flannel.jpg",
       "finish": "Double-face mechanical fleece brush"
+    },
+    {
+      "id": "linen-organic-180",
+      "name": "100% Organic Linen",
+      "category": "woven",
+      "weave": "Plain weave, open structure",
+      "comp": "100% organic European flax linen",
+      "yarnCount": "20s × 20s",
+      "weight": "180 gsm",
+      "weightOz": "5.3 oz/yd²",
+      "moq": "1,500 m",
+      "shrinkage": "Warp < 3.0% / Weft < 2.5%",
+      "tariff": "HS 5309.11.00",
+      "image": "/images/linen.jpg",
+      "finish": "Softened, enzyme washed"
     }
   ],
   "fiberStandards": [
