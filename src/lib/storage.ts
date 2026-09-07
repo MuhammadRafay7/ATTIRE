@@ -39,7 +39,7 @@ function getGitHubConfig() {
   const repo = process.env.GITHUB_REPO || "MuhammadRafay7/ATTIRE";
   const branch = process.env.GITHUB_BRANCH || "main";
   if (token) {
-    return { token, repo, branch };
+    return { token: token.trim(), repo: repo.trim(), branch: branch.trim() };
   }
   return null;
 }
@@ -86,6 +86,46 @@ async function fetchFromKV<T>(section: SectionName): Promise<T | null> {
 }
 
 /**
+ * Fetch a section directly from GitHub repository if GITHUB_TOKEN is available
+ */
+async function fetchFromGitHub<T>(section: SectionName): Promise<T | null> {
+  const gh = getGitHubConfig();
+  if (!gh) return null;
+
+  try {
+    const filePath = `src/content/${section}.json`;
+    const url = `https://api.github.com/repos/${gh.repo}/contents/${filePath}?ref=${gh.branch}&t=${Date.now()}`;
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${gh.token}`,
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "Attire-Services-CMS",
+      },
+      cache: "no-store",
+    });
+
+    if (res.ok) {
+      const fileInfo = await res.json();
+      if (fileInfo.content && fileInfo.encoding === "base64") {
+        const decoded = Buffer.from(fileInfo.content, "base64").toString("utf-8");
+        const parsed = JSON.parse(decoded);
+        const schema = SectionSchemas[section];
+        const validation = schema.safeParse(parsed);
+        if (validation.success) {
+          memoryStore[section] = validation.data;
+          return validation.data as T;
+        }
+      }
+    }
+  } catch {
+    // Fail silently
+  }
+
+  return null;
+}
+
+/**
  * Persist section data to KV Store via REST
  */
 async function saveToKV<T>(section: SectionName, data: T): Promise<boolean> {
@@ -110,15 +150,15 @@ async function saveToKV<T>(section: SectionName, data: T): Promise<boolean> {
 }
 
 /**
- * Commit updated JSON to GitHub repository asynchronously for permanent GitOps history
+ * Commit updated JSON to GitHub repository synchronously to ensure serverless execution
  */
-async function commitToGitHub(section: SectionName, data: unknown): Promise<void> {
+async function commitToGitHub(section: SectionName, data: unknown): Promise<{ success: boolean; error?: string }> {
   const gh = getGitHubConfig();
-  if (!gh) return;
+  if (!gh) return { success: false, error: "GITHUB_TOKEN is not set" };
 
   try {
     const filePath = `src/content/${section}.json`;
-    const getUrl = `https://api.github.com/repos/${gh.repo}/contents/${filePath}?ref=${gh.branch}`;
+    const getUrl = `https://api.github.com/repos/${gh.repo}/contents/${filePath}?ref=${gh.branch}&t=${Date.now()}`;
     
     let sha: string | undefined;
     try {
@@ -127,6 +167,7 @@ async function commitToGitHub(section: SectionName, data: unknown): Promise<void
           Authorization: `Bearer ${gh.token}`,
           Accept: "application/vnd.github+json",
           "X-GitHub-Api-Version": "2022-11-28",
+          "User-Agent": "Attire-Services-CMS",
         },
         cache: "no-store",
       });
@@ -135,18 +176,19 @@ async function commitToGitHub(section: SectionName, data: unknown): Promise<void
         sha = fileInfo.sha;
       }
     } catch {
-      // If file doesn't exist yet, sha remains undefined
+      // sha stays undefined
     }
 
     const putUrl = `https://api.github.com/repos/${gh.repo}/contents/${filePath}`;
     const contentBase64 = Buffer.from(JSON.stringify(data, null, 2)).toString("base64");
 
-    await fetch(putUrl, {
+    const putRes = await fetch(putUrl, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${gh.token}`,
         Accept: "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "Attire-Services-CMS",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -157,8 +199,15 @@ async function commitToGitHub(section: SectionName, data: unknown): Promise<void
       }),
       cache: "no-store",
     });
-  } catch {
-    // Non-blocking background sync
+
+    if (!putRes.ok) {
+      const errText = await putRes.text();
+      return { success: false, error: `GitHub API error ${putRes.status}: ${errText}` };
+    }
+
+    return { success: true };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
   }
 }
 
@@ -191,9 +240,10 @@ function backupSection(section: SectionName) {
 /**
  * Universal content getter with multi-tier fallback:
  * 1. Serverless KV Store (live synced overrides)
- * 2. In-memory cache
- * 3. Local filesystem (if available)
- * 4. Bundled JSON defaults
+ * 2. GitHub REST API (live Git file read)
+ * 3. In-memory cache
+ * 4. Local filesystem (if available)
+ * 5. Bundled JSON defaults
  */
 export async function getSectionData<T>(section: SectionName): Promise<T> {
   // 1. Try KV store
@@ -202,12 +252,18 @@ export async function getSectionData<T>(section: SectionName): Promise<T> {
     return kvData;
   }
 
-  // 2. Try in-memory store
+  // 2. Try GitHub live contents
+  const ghData = await fetchFromGitHub<T>(section);
+  if (ghData) {
+    return ghData;
+  }
+
+  // 3. Try in-memory store
   if (memoryStore[section]) {
     return memoryStore[section] as T;
   }
 
-  // 3. Try reading local file
+  // 4. Try reading local file
   try {
     const filePath = path.join(CONTENT_DIR, `${section}.json`);
     if (fs.existsSync(filePath)) {
@@ -231,7 +287,7 @@ export function getSectionDataSync<T>(section: SectionName): T {
 }
 
 /**
- * Save section data with instant Next.js cache purging, KV update, local file write, and async GitOps sync
+ * Save section data with instant Next.js cache purging, KV update, GitHub commit, and local file write
  */
 export async function saveSectionData<T>(section: SectionName, rawData: unknown): Promise<{ success: boolean; message: string; data: T }> {
   const schema = SectionSchemas[section];
@@ -263,8 +319,8 @@ export async function saveSectionData<T>(section: SectionName, rawData: unknown)
   // 3. Persist to Serverless KV Store
   await saveToKV(section, validData);
 
-  // 4. Background sync to GitHub for permanent GitOps version control
-  commitToGitHub(section, validData).catch(() => {});
+  // 4. Await GitHub commit in serverless environment to prevent Lambda freezing
+  const ghResult = await commitToGitHub(section, validData);
 
   // 5. Invalidate Next.js cache paths dynamically
   try {
@@ -279,12 +335,19 @@ export async function saveSectionData<T>(section: SectionName, rawData: unknown)
       nextCache.revalidatePath("/contact");
     }
   } catch {
-    // Ignore outside Next.js request context (e.g. CLI scripts or background workers)
+    // Ignore outside Next.js request context
+  }
+
+  let msg = `Section '${section}' successfully updated and published live.`;
+  if (ghResult.success) {
+    msg += ` (Committed to GitHub repository)`;
+  } else if (ghResult.error && !ghResult.error.includes("GITHUB_TOKEN is not set")) {
+    msg += ` [Note: GitHub sync returned: ${ghResult.error}]`;
   }
 
   return {
     success: true,
-    message: `Section '${section}' successfully updated, verified, and revalidated across live site routes.`,
+    message: msg,
     data: validData,
   };
 }
