@@ -139,13 +139,14 @@
     "GDPR & Commercial Confidentiality"
   ],
   "theme": {
-    "accentColor": "brass",
+    "accentColor": "emerald",
     "styleMode": "editorial",
     "announcementBanner": {
-      "enabled": false,
-      "badge": "Notice",
-      "text": "Now booking Q4 2026 mill spinning allocations.",
+      "enabled": true,
+      "badge": "New Allocation",
+      "text": "Q4 2026 Mill Capacity Now Open",
       "href": "/contact"
-    }
+    },
+    "customCss": ""
   }
 }
